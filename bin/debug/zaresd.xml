@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="gb2312"?>
+<XMLIni>
+ <!--全局配置信息-->
+ <Section name="System">
+ </Section>
+
+ <!--接受客户端的连接-->
+ <Section name="ZAresdServer">
+  <Item name="host">0.0.0.0</Item>
+  <Item name="port">11000</Item>
+ </Section>
+ 
+ <Section name="DatabaseServer">
+  <Item name="host">192.168.1.101</Item>
+  <Item name="user">root</Item>
+  <Item name="passwd"></Item>
+  <Item name="dbname">macim</Item>
+  <Item name="dbtype">mysql</Item>
+  <Item name="min_conn_count">2</Item>
+  <Item name="max_conn_count">5</Item>
+ </Section>
+
+ </XMLIni>
