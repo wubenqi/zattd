@@ -14,7 +14,7 @@ namespace db {
   class CdbConnPoolManager;
 }
 
-class RelationshipManager;
+class ZAresRelationshipManagerImpl;
 class ZAresMessageManagerImpl : public MessageManager {
 public:
   ZAresMessageManagerImpl(db::CdbConnPoolManager* db_conn_pool) :
@@ -22,7 +22,7 @@ public:
     relationship_manager_(NULL) {}
   virtual ~ZAresMessageManagerImpl() {}
 
-  void SetRelationshipManager(RelationshipManager* relationship_manager) { relationship_manager_ = relationship_manager; }
+  void SetRelationshipManager(ZAresRelationshipManagerImpl* relationship_manager) { relationship_manager_ = relationship_manager; }
 
   //////////////////////////////////////////////////////////////////////////
   // 获取单向数据，取未读消息用的,这里只取单向的，所以不用relateId
@@ -50,7 +50,7 @@ public:
 
 private:
   db::CdbConnPoolManager* db_conn_pool_;
-  RelationshipManager* relationship_manager_;
+  ZAresRelationshipManagerImpl* relationship_manager_;
 };
 
 #endif

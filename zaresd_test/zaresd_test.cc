@@ -48,6 +48,9 @@
 #include "proto/group_create_tmp_group_request.h"
 #include "zaresd/message_handler/group_create_tmp_group_request_handler.h"
 
+#include "proto/group_change_member_request.h"
+#include "zaresd/message_handler/group_change_member_request_handler.h"
+
 void ValidateRequestHandler_Test() {
   ValidateRequest validate_request;
   validate_request.set_user_name("A");
@@ -134,6 +137,21 @@ void GroupCreateTmpGroupRequestHandler_Test() {
   GroupCreateTmpGroupRequestHandler::Execute(NULL, 0, &group_create_tmp_group_request);
 }
 
+void GroupChangeMemberRequestHandler_Test() {
+  GroupChangeMemberRequest group_change_member_request;
+  group_change_member_request.set_req_user_id(10035);
+  group_change_member_request.set_group_id(104250);
+  group_change_member_request.add_user_list(10036);
+
+  // QuitGroup
+  group_change_member_request.set_change_type(1);
+  GroupChangeMemberRequestHandler::Execute(NULL, 0, &group_change_member_request);
+
+  // JoinGroup
+  group_change_member_request.set_change_type(0);
+  GroupChangeMemberRequestHandler::Execute(NULL, 0, &group_change_member_request);
+}
+
 int main(int argc, char* argv[]) {
   base::AtExitManager at_exit;
 
@@ -151,8 +169,9 @@ int main(int argc, char* argv[]) {
   GroupListRequestHandler_Test();
   GroupDialogListRequestHandler_Test();
   GroupUserListRequestHandler_Test();
+  GroupCreateTmpGroupRequestHandler_Test();
 #endif
 
-  GroupCreateTmpGroupRequestHandler_Test();
+  GroupChangeMemberRequestHandler_Test();
   return 0;
 }

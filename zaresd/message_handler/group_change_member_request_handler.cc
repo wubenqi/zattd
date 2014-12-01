@@ -57,8 +57,10 @@ int GroupChangeMemberRequestHandler::Execute(ZAresHandlerThread* context, uint64
   group_change_member_response.set_group_id(group_change_member_request->group_id());
   group_change_member_response.set_change_type(change_type);
 
-  context->SendSessionData(session_id, group_change_member_response);
-
+  if (context) {
+    context->SendSessionData(session_id, group_change_member_response);
+  }
+ 
   return 0;
 }
 
