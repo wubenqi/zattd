@@ -17,7 +17,7 @@
 bool ZAresDepartmentManagerImpl::GetDepartmentInfos(std::vector<DepartmentInfo*>* department_infos) {
  
   db::ScopedPtr_DatabaseConnection db_conn(db_conn_pool_);
-  scoped_ptr<db::QueryAnswer> answ(db_conn->Query("SELECT id,title,leader,pid,status,desc FROM imdepartment WHERE status = 0"));
+  scoped_ptr<db::QueryAnswer> answ(db_conn->Query("SELECT `id`,`title`,`leader`,`pid`,`status`,`desc` FROM IMDepartment WHERE status = 0"));
 
   if (answ.get() != NULL) {
    while (answ->FetchRow()) {

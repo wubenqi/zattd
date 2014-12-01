@@ -17,7 +17,9 @@
 // 可以以插件方式实现不同的数据访问
 class ModelMainManager {
 public:
-  ~ModelMainManager() {}
+  ~ModelMainManager() {
+    Destroy();
+  }
 
   static ModelMainManager* GetInstance() {
     return Singleton<ModelMainManager>::get();

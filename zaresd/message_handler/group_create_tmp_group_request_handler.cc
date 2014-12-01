@@ -50,7 +50,9 @@ int GroupCreateTmpGroupRequestHandler::Execute(ZAresHandlerThread* context, uint
   group_create_tmp_group_response.set_result(result);
   group_create_tmp_group_response.set_group_id(group_id);
 
-  context->SendSessionData(session_id, group_create_tmp_group_response);
+  if (context) {
+    context->SendSessionData(session_id, group_create_tmp_group_response);
+  }
 
   return 0;
 }

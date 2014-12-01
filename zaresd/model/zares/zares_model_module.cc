@@ -71,7 +71,7 @@ bool ZAresModelModule::Initialize(const std::string model_type) {
   }
 
   // Setup manager's relation
-  message_manager->SetRelationshipManager(relationship_manager_);
+  message_manager->SetRelationshipManager(relationship_manager);
   return true;
 }
 

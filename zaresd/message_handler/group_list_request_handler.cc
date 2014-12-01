@@ -20,16 +20,16 @@
 
 // 返回用户加入的群信息
 int GroupListRequestHandler::Execute(ZAresHandlerThread* context, uint64 session_id, const message::MessagePDU* message) {
-  CAST_PROTO_MESSAGE(GroupListResponse, group_list_request);
+  CAST_PROTO_MESSAGE(GroupListRequest, group_list_request);
 
   GroupManager* group_manager = ModelMainManager::GetInstance()->GetGroupManager();
 
   GroupListResponse group_list_response;
-  group_list_response.set_req_user_id(group_list_request->req_user_id());
+  group_list_response.set_req_user_id(group_list_request->user_id());
   group_list_response.MutableAttachData()->CopyFrom(group_list_request->GetAttachData());
 
   std::vector<GroupInfo*>* groups = group_list_response.mutable_group_list();
-  if (group_manager->GetGroupsByUserId(group_list_request->req_user_id(), true, groups) > 0) {
+  if (group_manager->GetGroupsByUserId(group_list_request->user_id(), true, groups) > 0) {
     std::vector<uint32> group_ids;
     for (size_t i=0; i<groups->size(); ++i) {
       group_ids.push_back((*groups)[i]->group_id);
@@ -48,7 +48,9 @@ int GroupListRequestHandler::Execute(ZAresHandlerThread* context, uint64 session
     }
   }
 
-  context->SendSessionData(session_id, group_list_response);
+  if (context) {
+    context->SendSessionData(session_id, group_list_response);
+  }
 
   return 0;
 }

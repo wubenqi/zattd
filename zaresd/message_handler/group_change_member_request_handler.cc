@@ -44,8 +44,9 @@ int GroupChangeMemberRequestHandler::Execute(ZAresHandlerThread* context, uint64
     if (group_manager->GetGroupInfo(group_change_member_request->group_id(), &group)) {
       group_manager->QuitGroup(
           group_change_member_request->req_user_id(),
+          group_change_member_request->user_list(),
           group_change_member_request->group_id(),
-          group_change_member_request->user_list());
+          group);
       *(group_change_member_response.mutable_user_list()) = group_change_member_request->user_list();
     }
     change_type = 1;

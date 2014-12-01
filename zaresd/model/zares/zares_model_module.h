@@ -12,6 +12,7 @@
 
 #include "db/conn_pool_manager.h"
 
+// TT的数据库实现
 class ZAresModelModule : public ModelModule {
 public:
   ZAresModelModule() {}

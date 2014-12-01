@@ -52,7 +52,9 @@ int GroupDialogListRequestHandler::Execute(ZAresHandlerThread* context, uint64 s
     LOG(ERROR) << "group_dialog_list_request->user_id() = 0 is valid!!!!";
   }
 
-  context->SendSessionData(session_id, group_dialog_list_response);
+  if (context) {
+    context->SendSessionData(session_id, group_dialog_list_response);
+  }
 
   return 0;
 }

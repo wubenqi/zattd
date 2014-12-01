@@ -11,7 +11,7 @@
  </Section>
  
  <Section name="DatabaseServer">
-  <Item name="host">192.168.1.101</Item>
+  <Item name="host">10.211.55.2</Item>
   <Item name="user">root</Item>
   <Item name="passwd"></Item>
   <Item name="dbname">macim</Item>

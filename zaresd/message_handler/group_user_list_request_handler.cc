@@ -46,7 +46,9 @@ int GroupUserListRequestHandler::Execute(ZAresHandlerThread* context, uint64 ses
     group_user_list_response.set_result(1);
   }
 
-  context->SendSessionData(session_id, group_user_list_response);
+  if (context) {
+    context->SendSessionData(session_id, group_user_list_response);
+  }
 
   return 0;
 }

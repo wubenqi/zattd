@@ -10,7 +10,10 @@
 #include "base/logging.h"
 #include "base/memory/scoped_ptr.h"
 #include "base/stringprintf.h"
+#include "base2/time2.h"
+
 #include "db/conn_pool_manager.h"
+#include "db/database_util.h"
 
 #include "zaresd/const_zaresd_defines.h"
 #include "zaresd/model/relationship_manager.h"
@@ -140,5 +143,39 @@ bool ZAresMessageManagerImpl::SendIMGroupMessage(uint32 userId, uint32 to_group_
 }
 
 bool ZAresMessageManagerImpl::SendIMMessage(uint32 from_user_id, uint32 to_user_id, uint32 type, const std::string& content, uint32 time) {
-  return true;
+  if (from_user_id==0 || to_user_id==0 || content.empty()) {
+    LOG(ERROR) << "from_user_id = 0 or to_user_id = 0 or content is empty!!!!!";
+    return false;
+  }
+
+  // 好友关系
+  relationship_manager_->CheckAndUpdateRelation(from_user_id, to_user_id);
+  uint32 relate_id = relationship_manager_->GetRelateId(from_user_id, to_user_id);
+  if (relate_id == kInvalidID) {
+    relate_id = relationship_manager_->AddFriendship(from_user_id, to_user_id);
+  }
+
+  uint32 ctime = base::NowMSTime()/1000;
+  db::QueryParam p;
+  p.AddParam(&relate_id);
+  p.AddParam(&from_user_id);
+  p.AddParam(&to_user_id);
+  p.AddParam(content.c_str(), content.length());
+  p.AddParam(&type);
+  p.AddParam(&ctime);
+  p.AddParam(&ctime);
+  
+  std::string sql;
+  db::MakeQueryString("INSERT INTO IMMessage(`relateId`,`fromUserId`,`toUserId`,`content`,`type`,`created`,`updated`) VALUES(:1,:2,:3,:4,:5,:6,:7)", &p, &sql);
+  db::ScopedPtr_DatabaseConnection db_conn(db_conn_pool_);
+  
+  bool is_sucess =  (0 == db_conn->Execute(sql));
+
+  if (is_sucess) {
+    // 增加计数
+    // incrCounterForNewMessage(fromUserId, toUserId, succCount);
+    // writeNewMsgToCinfo(toUserId); // 加到用户消息中心里的未读聊天消息.
+  }
+
+  return is_sucess;
 }

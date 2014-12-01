@@ -51,7 +51,7 @@ bool ZAresUserManagerImpl::GetUserInfo(const std::vector<uint32> user_ids, std::
 
   // SELECT uname,id,status,title,departid,sex,jobnumber,telphone,mail,position,avatar,nickname FROM imusers WHERE uname=%s
   std::string sql = base::StringPrintf(
-      "SELECT uname,id,status,title,departid,sex,jobnumber,telphone,mail,position,avatar,nickname FROM imusers WHERE id in (%s)",
+      "SELECT uname,id,status,title,departId,sex,jobNumber,telphone,mail,position,avatar,nickName FROM IMUsers WHERE id IN (%s)",
       s_user_ids.c_str());
   scoped_ptr<db::QueryAnswer> answ(db_conn->Query(sql));
 
@@ -136,8 +136,8 @@ bool ZAresUserManagerImpl::GetAllUserInfo(std::vector<UserInfo*>* user_infos) {
   if (answ.get() != NULL) {
     while (answ->FetchRow()) {
       UserInfo* user = new UserInfo();
-      // all_user_response.add_user_info_list();
       user->ParseFromDatabase(*answ);
+      user_infos->push_back(user);
     }
 
     return true;

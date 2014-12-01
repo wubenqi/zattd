@@ -129,7 +129,9 @@ int RemoveSessionRequestHandler::Execute(ZAresHandlerThread* context, uint64 ses
   }
   remove_session_response.set_result(result ? 0 : 1);
 
-  context->SendSessionData(session_id, remove_session_response);
+  if (context) {
+    context->SendSessionData(session_id, remove_session_response);
+  }
 
   return 0;
 }

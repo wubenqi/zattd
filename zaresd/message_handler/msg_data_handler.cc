@@ -32,6 +32,11 @@ int MsgDataHandler::Execute(ZAresHandlerThread* context, uint64 session_id, cons
   db_write_response.set_from_id(msg_data->from_user_id());
   db_write_response.set_to_id(msg_data->to_user_id());
 
+  const int MESSAGE_TYPE_IM = 1; // 普通用户+系统消息
+  const int MESSAGE_TYPE_IM_AUDIO = 2;
+  const int MESSAGE_TYPE_IM_GROUP = 17;
+  const int MESSAGE_TYPE_IM_GROUP_AUDIO = 18;
+
   // 1. check request msg_data
   bool is_sucess = false;
   bool is_group_message = false;
@@ -40,8 +45,8 @@ int MsgDataHandler::Execute(ZAresHandlerThread* context, uint64 session_id, cons
       msg_data->to_user_id() == 0 || 
       msg_data->msg_type() == 0 || 
       msg_data->msg_data().empty() ||
-      ( (msg_data->msg_type() == 1 || msg_data->msg_type() == 17) && msg_data->msg_data().length() > 1536) || // 一般的文本消息
-      ( (msg_data->msg_type() == 2 || msg_data->msg_type() == 18) && msg_data->msg_data().length() > 102400)) {
+      ( (msg_data->msg_type() == MESSAGE_TYPE_IM || msg_data->msg_type() == MESSAGE_TYPE_IM_GROUP) && msg_data->msg_data().length() > 1536) || // 一般的文本消息
+      ( (msg_data->msg_type() == MESSAGE_TYPE_IM_AUDIO || msg_data->msg_type() == MESSAGE_TYPE_IM_GROUP_AUDIO) && msg_data->msg_data().length() > 102400)) {
     LOG(ERROR) << "Check data is invalid!!!!";
     is_sucess = false;
   } else {
@@ -84,7 +89,9 @@ int MsgDataHandler::Execute(ZAresHandlerThread* context, uint64 session_id, cons
   }
   db_write_response.set_result(is_sucess ? 0 : 1);
 
-  context->SendSessionData(session_id, db_write_response);
+  if (context) {
+    context->SendSessionData(session_id, db_write_response);
+  }
 
   return 0;
 }

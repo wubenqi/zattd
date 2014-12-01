@@ -216,6 +216,75 @@ bool ServerMsg::SerializeToByteStream(net::ByteStream* os) const {
 }
 
 //////////////////////////////////////////////////////////////////////////
+uint32 GroupInfo::ByteSize() const {
+  return sizeof(group_id) +
+    SIZEOF_STRING(group_name) +
+    SIZEOF_STRING(group_avatar) +
+    sizeof(group_creator_id) +
+    sizeof(group_type) +
+    sizeof(group_updated) +
+    CalculateContainerByteSize(group_memeber_list);
+}
+
+bool GroupInfo::ParseFromByteStream(const net::ByteStream& is) {
+  is >> group_id;
+  is.ReadString(group_name);
+  is.ReadString(group_avatar);
+  is >> group_creator_id
+    >> group_type
+    >> group_updated;
+  uint32 group_memeber_list_size = 0;
+  is >> group_memeber_list_size;
+  for (size_t i=0; i<group_memeber_list_size; ++i) {
+    uint32 group_memeber_id = 0;
+    is >> group_memeber_id;
+    group_memeber_list.push_back(group_memeber_id);
+  }
+  return !is.Fail();
+}
+
+bool GroupInfo::SerializeToByteStream(net::ByteStream* os) const {
+  (*os) << group_id;
+  os->WriteString(group_name);
+  os->WriteString(group_avatar);
+  (*os) << group_creator_id
+    << group_type
+    << group_updated
+    << group_memeber_list.size();
+  for (size_t i=0; i<group_memeber_list.size(); ++i) {
+    (*os) << group_memeber_list[i];
+  }
+  return true;
+}
+
+#ifdef ZARESD_SERVER_LIB
+bool GroupInfo::ParseFromDatabase(const db::QueryAnswer& answ) {
+  // "SELECT groupId,groupName,avatar,createUserId,groupType,updated FROM IMGroup WHERE groupId IN "
+  //   "(SELECT groupId FROM IMGroupRelation WHERE userId=%d AND status>=1 %s ORDER BY created DESC, id DESC LIMIT %d)",
+  enum {
+    kColumn_GroupID = 0,
+    kColumn_GroupName,
+    kColumn_Avatar,
+    kColumn_CreateUserID,
+    kColumn_GroupType,
+    kColumn_Updated,
+  };
+
+  bool result  = true;
+  do {
+    DB_GET_RETURN_COLUMN(kColumn_GroupID, group_id);
+    DB_GET_RETURN_COLUMN(kColumn_GroupName, group_name);
+    DB_GET_RETURN_COLUMN(kColumn_Avatar, group_avatar);
+    DB_GET_RETURN_COLUMN(kColumn_CreateUserID, group_creator_id);
+    DB_GET_RETURN_COLUMN(kColumn_GroupType, group_type);
+    DB_GET_RETURN_COLUMN(kColumn_Updated, group_updated);
+  } while (0);
+
+  return result;
+}
+#endif
+
+//////////////////////////////////////////////////////////////////////////
 const BaseAttachData* BaseTeamTalkPDU::GetAttachData() const {
   return attach_data_;
 }

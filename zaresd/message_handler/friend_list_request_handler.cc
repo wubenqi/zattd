@@ -26,10 +26,16 @@ int FriendListRequestHandler::Execute(ZAresHandlerThread* context, uint64 sessio
   friend_list_response.set_from_user_id(friend_list_request->user_id());
   friend_list_response.MutableAttachData()->CopyFrom(friend_list_request->GetAttachData());
 
-  RelationshipManager* relationship_manager = ModelMainManager::GetInstance()->GetRelationshipManager();
-  relationship_manager->GetRecentContactByUserId(friend_list_request->user_id(), 100, friend_list_response.mutable_friend_lists());
+  if (friend_list_request->user_id() > 0) {
+    RelationshipManager* relationship_manager = ModelMainManager::GetInstance()->GetRelationshipManager();
+    relationship_manager->GetRecentContactByUserId(friend_list_request->user_id(), 100, friend_list_response.mutable_friend_lists());
+  } else {
+    LOG(ERROR) << "FriendListRequest: user_id is 0!!!!!!!!!!";
+  }
 
-  context->SendSessionData(session_id, friend_list_response);
+  if (context) {
+    context->SendSessionData(session_id, friend_list_response);
+  }
 
   return 0;
 }

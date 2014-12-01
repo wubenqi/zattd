@@ -9,16 +9,23 @@
 
 #include "base/logging.h"
 
+#include "zaresd/model/zares/zares_model_module.h"
+
 bool ModelMainManager::Initialize(const std::string model_type) {
-//   if (model_type == "zaresd") {
-//     login_manager_ = new LoginManagerImpl();
-//   } else {
-//     NOTREACHED() << "Invalid model_type " << model_type;
-//   }
+  if (model_type == "zares") {
+    module_ = new ZAresModelModule();
+    module_->Initialize(model_type);
+  } else {
+    NOTREACHED() << "Invalid model_type " << model_type;
+  }
   return true;
 }
 
 void ModelMainManager::Destroy() {
+  if (module_) {
+    delete module_;
+    module_ = NULL;
+  }
 }
 
 LoginManager* ModelMainManager::GetLoginManager() {

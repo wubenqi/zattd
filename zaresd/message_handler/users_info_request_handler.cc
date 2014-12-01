@@ -25,12 +25,17 @@ int UsersInfoRequestHandler::Execute(ZAresHandlerThread* context, uint64 session
 
   UsersInfoResponse users_info_response;
   users_info_response.set_from_user_id(users_info_request->from_user_id());
-  if (!user_manager->GetUserInfo(users_info_request->user_id_list(), users_info_response.mutable_user_info_list())) {
-    // TODO: 
-    //  LOG(ERROR) << "";
+  users_info_response.MutableAttachData()->CopyFrom(users_info_request->GetAttachData());
+
+  if (users_info_request->from_user_id() == 0 || users_info_request->user_id_list().empty()) {
+    LOG(ERROR) << "users_info_request: from_user_id = 0 || user_id_list is empty!!!!";
+  } else if (!user_manager->GetUserInfo(users_info_request->user_id_list(), users_info_response.mutable_user_info_list())) {
+    LOG(ERROR) << "GetUserInfo() error!!!!";
   }
 
-  context->SendSessionData(session_id, users_info_response);
+  if (context) {
+    context->SendSessionData(session_id, users_info_response);
+  }
 
   return 0;
 }

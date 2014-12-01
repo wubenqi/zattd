@@ -24,4 +24,6 @@ const uint32 UNREAD_MAX_COUNTER = 100; // 用户一次读取未读消息不能超过100
 
 const uint32 SYS_SERVER_USER_ID = 10000;
 
+const uint32 kInvalidID = 0xFFFFFFFF;
+
 #endif

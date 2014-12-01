@@ -31,7 +31,9 @@ int AllUserRequestHandler::Execute(ZAresHandlerThread* context, uint64 session_i
     LOG(ERROR) << "all_user_request.req_user_id ivalid, val=0!!!!";
   }
 
-  context->SendSessionData(session_id, all_user_response);
+  if (context) {
+    context->SendSessionData(session_id, all_user_response);
+  }
 
   return 0;
 }

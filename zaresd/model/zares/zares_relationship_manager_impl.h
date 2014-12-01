@@ -30,6 +30,9 @@ public:
   // 以小的用户Id在前的记录的relateId作为两个人之间的关系Id,查询对话的时候根据关系Id查询
   virtual uint32 GetRelateId(uint32 user_AId, uint32 user_BId);
 
+  virtual bool CheckAndUpdateRelation(uint32 usera_id, uint32 userb_id);
+  virtual uint32 AddFriendship(uint32 usera_id, uint32 userb_id);
+
 private:
   db::CdbConnPoolManager* db_conn_pool_;
 };

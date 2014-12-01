@@ -20,7 +20,7 @@
 #include "zaresd/zares_handler_thread.h"
 
 int DepartmentRequestHandler::Execute(ZAresHandlerThread* context, uint64 session_id, const message::MessagePDU* message) {
-  CAST_PROTO_MESSAGE(DeparmentRequest, department_request);
+  CAST_PROTO_MESSAGE(DepartmentRequest, department_request);
 
   LOG(INFO) << "DepartmentRequestHandler::Execute(): req_user_id = " << department_request->req_user_id();
   DepartmentResponse department_response;
@@ -32,7 +32,9 @@ int DepartmentRequestHandler::Execute(ZAresHandlerThread* context, uint64 sessio
     LOG(ERROR) << "depart_list is empty!!!!";
   }
 
-  context->SendSessionData(session_id, department_response);
+  if (context) {
+    context->SendSessionData(session_id, department_response);
+  }
 
   return 0;
 }

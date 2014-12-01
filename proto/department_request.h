@@ -10,12 +10,12 @@
 
 #include "proto/base_teamtalk_pdu.h"
 
-class DeparmentRequest : public BaseTeamTalkPDU {
+class DepartmentRequest : public BaseTeamTalkPDU {
 public:
-  DeparmentRequest() :
+  DepartmentRequest() :
     BaseTeamTalkPDU(MESSAGE_DEPARTMENT_REQUEST, BaseAttachData::kAttachDataTypeDB) {}
 
-  virtual ~DeparmentRequest() {}
+  virtual ~DepartmentRequest() {}
 
   PROPERTY_BASIC_TYPE_DECLARE(uint32, req_user_id);
 

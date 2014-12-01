@@ -45,7 +45,7 @@ public:
   virtual bool JoinGroup(const std::vector<uint32>& user_ids, uint32 group_id, const GroupInfo& group);
 
   // ÍË³öÈº
-  virtual bool QuitGroup(uint32 request_user_id, uint32 group_id, const std::vector<uint32>& quit_user_ids);
+  virtual bool QuitGroup(uint32 request_user_id, const std::vector<uint32>& quit_user_ids, uint32 group_id, const GroupInfo& group);
 
 private:
   db::CdbConnPoolManager* db_conn_pool_;

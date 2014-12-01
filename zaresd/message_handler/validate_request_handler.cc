@@ -22,29 +22,35 @@
 int ValidateRequestHandler::Execute(ZAresHandlerThread* context, uint64 session_id, const message::MessagePDU* message) {
   CAST_PROTO_MESSAGE(ValidateRequest, validate_request);
 
-  // 1. Check validate_request invalid!!!!
-  LoginManager* login_manager = ModelMainManager::GetInstance()->GetLoginManager();
-  UserManager* user_manager = ModelMainManager::GetInstance()->GetUserManager();
-
   // 2. 取出用户信息，返回给请求客户端
   ValidateResponse validate_response;
   validate_response.set_user_name(validate_request->user_name());
   validate_response.MutableAttachData()->CopyFrom(validate_request->GetAttachData());
   validate_response.set_result(1);
 
-  bool is_authed = login_manager->Auth(validate_request->user_name(), validate_request->password());
+  if (validate_request->user_name().empty() 
+    || validate_request->password().empty()) {
+      LOG(ERROR) << "Check ValidateRequest: user_name or passwd is empty!!! user_name = " << validate_request->user_name();
+  } else {
+    // 1. Check validate_request invalid!!!!
+    LoginManager* login_manager = ModelMainManager::GetInstance()->GetLoginManager();
+    UserManager* user_manager = ModelMainManager::GetInstance()->GetUserManager();
 
-  if (is_authed) {
-    UserInfo user_info;
-    if (user_manager->GetUserInfo(validate_request->user_name(), &user_info)) {
+    bool is_authed = login_manager->Auth(validate_request->user_name(), validate_request->password());
+
+    if (is_authed) {
       validate_response.set_result(0);
-      *(validate_response.mutable_user()) = user_info;
+      if (user_manager->GetUserInfo(validate_request->user_name(), validate_response.mutable_user())) {
+        // 
+      } else {
+        LOG(ERROR) << "user_manager->GetUserInfo(" << validate_request->user_name() << ") error!!!!";
+      }
     } else {
-      // 
+      LOG(ERROR) << "login_manager->Auth(" << validate_request->user_name() << ") error!!!!";
     }
   }
 
-  context->SendSessionData(session_id, validate_response);
+  if (context) context->SendSessionData(session_id, validate_response);
 
   return 0;
 }

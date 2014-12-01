@@ -10,12 +10,23 @@
 #include "base/logging.h"
 #include "base/memory/scoped_ptr.h"
 #include "base/stringprintf.h"
+#include "base/string_number_conversions.h"
 #include "base2/string_util2.h"
 #include "base2/time2.h"
 
 #include "db/database_util.h"
 
 #include "db/conn_pool_manager.h"
+
+
+namespace {
+
+struct UserStatus {
+  uint32 status;
+  uint32 user_id;
+};
+
+}
 
 size_t ZAresGroupManagerImpl::GetGroupsByUserId(uint32 user_id, bool is_fixed_group, std::vector<GroupInfo*>* groups) {
   if (groups == NULL || user_id == 0) {
@@ -27,7 +38,7 @@ size_t ZAresGroupManagerImpl::GetGroupsByUserId(uint32 user_id, bool is_fixed_gr
 
   std::string sql = base::StringPrintf(
       "SELECT groupId,groupName,avatar,createUserId,groupType,updated FROM IMGroup WHERE groupId IN "
-      "(SELECT groupId FROM IMGroupRelation WHERE userId=%d AND status>=1 %s ORDER BY created DESC, id DESC LIMIT %d)",
+      "(SELECT groupId FROM (SELECT groupId FROM IMGroupRelation WHERE userId=%d AND status>=1 %s ORDER BY created DESC, id DESC LIMIT %d) AS tp)",
       user_id,
       (is_fixed_group ? " AND groupType = 1 " : ""),
       (is_fixed_group ? 200 : 5000));
@@ -56,7 +67,7 @@ size_t ZAresGroupManagerImpl::GetGroupIdsByUserId(uint32 user_id, bool is_fixed_
 
   std::string sql = base::StringPrintf(
     "SELECT groupId FROM IMGroup WHERE groupId IN "
-    "(SELECT groupId FROM IMGroupRelation WHERE userId=%d AND status>=1 %s ORDER BY created DESC, id DESC LIMIT %d)",
+    "SELECT groupId FROM (SELECT groupId FROM IMGroupRelation WHERE userId=%d AND status>=1 %s ORDER BY created DESC, id DESC LIMIT %d) AS tp",
     user_id,
     (is_fixed_group ? " AND groupType = 1 " : ""),
     (is_fixed_group ? 200 : 5000));
@@ -85,7 +96,7 @@ size_t ZAresGroupManagerImpl::GetGroupMembers(const std::vector<uint32>& group_i
   JoinString(group_ids, ',', &s_group_ids);
 
   std::string sql = base::StringPrintf(
-      "SELECT groupId,userId FROM IMGroupRelation WHERE groupId in (%s) AND status >= 1 OEDER BY created ASC LIMIT 10000", s_group_ids.c_str());
+      "SELECT groupId,userId FROM IMGroupRelation WHERE groupId in (%s) AND status >= 1 ORDER BY created ASC LIMIT 10000", s_group_ids.c_str());
 
   db::ScopedPtr_DatabaseConnection db_conn(db_conn_pool_);
   scoped_ptr<db::QueryAnswer> answ(db_conn->Query(sql));
@@ -119,7 +130,7 @@ size_t ZAresGroupManagerImpl::GetGroupMembers(uint32 group_id, GroupRelationInfo
   }
 
   std::string sql = base::StringPrintf(
-    "SELECT groupId,userId FROM IMGroupRelation WHERE groupId=%d AND status >= 1 OEDER BY created ASC LIMIT 10000", group_id);
+    "SELECT groupId,userId FROM IMGroupRelation WHERE groupId=%d AND status >= 1 ORDER BY created ASC LIMIT 10000", group_id);
 
   db::ScopedPtr_DatabaseConnection db_conn(db_conn_pool_);
   scoped_ptr<db::QueryAnswer> answ(db_conn->Query(sql));
@@ -145,7 +156,7 @@ const GroupInfo* ZAresGroupManagerImpl::GetGroupInfo(uint32 group_id, GroupInfo*
   }
 
   std::string sql = base::StringPrintf(
-    "SELECT groupId,groupName,avatar,createUserId,groupType,updated FROM IMGroup WHERE group_id=%d AND ststus>=1", group_id);
+    "SELECT groupId,groupName,avatar,createUserId,groupType,updated FROM IMGroup WHERE groupId=%d AND status>=1", group_id);
 
   db::ScopedPtr_DatabaseConnection db_conn(db_conn_pool_);
   scoped_ptr<db::QueryAnswer> answ(db_conn->Query(sql));
@@ -172,7 +183,7 @@ size_t ZAresGroupManagerImpl::GetRecentGroupsByUserId(uint32 user_id, std::vecto
 
   std::string sql = base::StringPrintf(
       "SELECT groupId,groupName,avatar,createUserId,groupType,updated FROM IMGroup WHERE groupId IN "
-      "(SELECT groupId FROM IMGroupRelation WHERE userId=%d AND status=1 %s ORDER BY updated DESC, id DESC LIMIT 100)",
+      "(SELECT groupId FROM (SELECT groupId FROM IMGroupRelation WHERE userId=%d AND status=1 ORDER BY updated DESC, id DESC LIMIT 100) AS tp)",
       user_id);
 
   scoped_ptr<db::QueryAnswer> answ(db_conn->Query(sql));
@@ -195,9 +206,8 @@ bool ZAresGroupManagerImpl::CreateGroup(uint32 create_user_id, const std::string
     return false;
   } 
 
-  #define kCreateGroupQuery "INSERT INTO IMGroup(`groupName`,`avatar`,`adesc`,`createUserId`,`groupType`,`memberCnt`,`created`,`updated`) VALUES(:1,:2,:3,:4,:5,0,:7,:8)"
-
   group->group_id = 0;
+  group->group_creator_id = create_user_id;
   group->group_name = group_name;
   group->group_avatar = avatar;
   group->group_type = group_type;
@@ -214,18 +224,20 @@ bool ZAresGroupManagerImpl::CreateGroup(uint32 create_user_id, const std::string
   p.AddParam(&now);
   
   std::string sql;
-  MakeQueryString(kCreateGroupQuery, &p, &sql);
+  // INSERT INTO IMGroup(`groupName`,`avatar`,`adesc`,`createUserId`,`groupType`,`memberCnt`,`created`,`updated`) VALUES(:1,:2,:3,:4,:5,0,:7,:8)
+  MakeQueryString("INSERT INTO IMGroup(`groupName`,`avatar`,`adesc`,`createUserId`,`groupType`,`memberCnt`,`created`,`updated`) VALUES(:1,:2,:3,:4,:5,0,:7,:8)", &p, &sql);
 
   uint64 group_id = 0;
   {
     db::ScopedPtr_DatabaseConnection db_conn(db_conn_pool_);
-    uint64 group_id = db_conn->ExecuteInsertID(sql);
+    group_id = db_conn->ExecuteInsertID(sql);
     if (group_id>0) {
       group->group_id = group_id;
+      group->group_creator_id = create_user_id;
       group->group_name = group_name;
       group->group_avatar = avatar;
       group->group_type = group_type;
-      group->group_updated = base::NowMSTime()/1000;
+      group->group_updated = base::NowMSTime();
     }
   }
 
@@ -236,209 +248,128 @@ bool ZAresGroupManagerImpl::CreateGroup(uint32 create_user_id, const std::string
   return false;
 }
 
+
 bool ZAresGroupManagerImpl::JoinGroup(const std::vector<uint32>& user_ids, uint32 group_id, const GroupInfo& group) {
-#if 0
-  logger.info("seisei join group! groupId:" + groupId);
-  if (userIds == null || userIds.length <= 0 || groupId <= 0) {
+  if (user_ids.empty() || group_id == 0) {
     return false;
   }
-  if (group == null || group.getGroupId() != groupId) { // 群不存在
-    group = this.getGroupInfo(groupId); // 获得群信息
-    if (group == null || group.getGroupId() != groupId) {
-      return false;
+
+  if (group_id != group.group_id) {
+    return false;
+  }
+
+  uint32 now = base::NowMSTime();
+  std::map<uint32, UserStatus> user_statuss;
+
+  std::string s_user_ids;
+  JoinString(user_ids, ',', &s_user_ids);
+  std::string sql = StringPrintf("SELECT status,userId FROM IMGroupRelation WHERE groupId = %d AND userId IN (%s) GROUP BY userId ORDER BY id", group_id, s_user_ids.c_str());
+
+  db::ScopedPtr_DatabaseConnection db_conn(db_conn_pool_);
+  scoped_ptr<db::QueryAnswer> answ(db_conn->Query(sql));
+  if (answ.get()) {
+    while (answ->FetchRow()) {
+      UserStatus user_status;
+      answ->GetColumn(0, &user_status.status);
+      answ->GetColumn(1, &user_status.user_id);
+      user_statuss.insert(std::make_pair(user_status.user_id, user_status));
+    }
+  }
+  
+  // 创建关系
+  sql = "INSERT INTO IMGroupRelation(`groupId`, `userId`, `title`, `groupType`, `created`, `updated`) VALUES ";
+  bool is_first = true;
+  // 1. 检查数据库中是否存在数据
+  for (size_t i=0; i<user_ids.size(); ++i) {
+    std::map<uint32, UserStatus>::iterator it = user_statuss.find(user_ids[i]);
+    if (it==user_statuss.end()) {
+      if (!is_first) {
+        sql.append(", ");
+      } else {
+        is_first = false;
+      }
+      base::StringAppendF(&sql, "(%d,%d,%d,%d,%d,%d)", group_id, user_ids[i], (group.group_creator_id==user_ids[i] ? 1 : 0), group.group_type, now, now);
     }
   }
 
-  Map<Integer, Integer> mapUserIds = MoguUtil.distinctToMap(userIds); // 去重
-
-  DBManager dbManager = DBManager.getInstance();
-  Connection conn = dbManager.getConnection(DBPoolName.macim_master);
-  PreparedStatement statement = null;
-  ResultSet rs = null;
-  int time = (int) (System.currentTimeMillis() / 1000);
-  int countAddedNum = 0;
-  try {
-    logger.info("seisei join group! select phase");
-    String selectClause = MoguUtil.getArgsHolder(mapUserIds.size());
-    String sqlGetRelation = "select * from IMGroupRelation where groupId = ? and userId in (";
-    sqlGetRelation += selectClause + ") group by userId order by id";
-
-    statement = conn.prepareStatement(sqlGetRelation);
-    statement.setInt(1, groupId);
-    Iterator<Integer> itr = mapUserIds.keySet().iterator();
-    int i = 1;
-    while (itr.hasNext()) {
-      statement.setObject(++i, itr.next());
-    }
-    rs = statement.executeQuery();
-
-    List<Integer> updateUids = new ArrayList<Integer>();
-    int uid = 0;
-    int status;
-    while (rs.next()) {
-      status = rs.getInt("status");
-      uid = rs.getInt("userId");
-      mapUserIds.remove(uid); // 表里已经有了就不用插入了
-      if (status == 0) { // 之前退出过更新就可以了
-        updateUids.add(uid);
-      }
-    }
-    rs.close();
-    statement.close();
-
-    // 创建关系
-    int createUserId = group.getCreateUserId();
-    int groupType = group.getGroupType();
-    int insertSize = mapUserIds.size();
-    int insertCount = 0;
-    if (insertSize > 0) {
-      logger.info("seisei join group! add phase");
-      String addClause = MoguUtil.getArgsHolder("(?, ?, ?, ?, ?, ?)",
-        ",", insertSize);
-      String sqlAddRelation = "insert into IMGroupRelation(`groupId`, `userId`, `title`, `groupType`, `created`, `updated`) "
-        + "values " + addClause;
-      statement = conn.prepareStatement(sqlAddRelation);
-      Iterator<Integer> iter = mapUserIds.values().iterator();
-      int index = 1;
-      while (iter.hasNext()) {
-        uid = iter.next();
-        statement.setInt(index++, groupId);
-        statement.setInt(index++, uid);
-        statement.setInt(index++, createUserId == uid ? 1 : 0);
-        statement.setInt(index++, groupType);
-        statement.setInt(index++, time);
-        statement.setInt(index++, time);
-      }
-      insertCount = statement.executeUpdate();
-      statement.close();
-    }
-
-    // 更新关系
-    int updateSize = updateUids.size();
-    int updateCount = 0;
-    if (updateSize > 0) {
-      logger.info("seisei join group! update phase");
-      String updateClause = MoguUtil.getArgsHolder(insertSize);
-      String sqlUpdateRelation = "update IMGroupRelation set status = 1 where groupId = ? and userId in (";
-      sqlUpdateRelation += updateClause + ")";
-      statement = conn.prepareStatement(sqlUpdateRelation);
-      int index = 1;
-      statement.setInt(index++, groupId);
-      for (int j = 0; j < updateSize; j++) {
-        statement.setInt(index++, updateUids.get(j));
-      }
-      updateCount = statement.executeUpdate();
-      statement.close();
-    }
-
-    // 更新群计数
-    countAddedNum = insertCount + updateCount;
-    if (countAddedNum > 0) {
-      logger.info("seisei join group! update count phase");
-      String sqlUpdateMemberCnt = "update IMGroup set memberCnt = memberCnt + ? where groupId = ? limit 1";
-      statement = conn.prepareStatement(sqlUpdateMemberCnt);
-      statement.setInt(1, countAddedNum);
-      statement.setInt(2, groupId);
-      statement.executeUpdate();
-    }
-  } catch (SQLException e) {
-    throw e;
-  } finally {
-    dbManager.release(DBPoolName.macim_master, conn, statement, rs);
+  int insert_count = 0;
+  
+  if (!is_first) {
+    insert_count = db_conn->Execute(sql);
   }
-  if (countAddedNum > 0) { // 成功
-    return true;
-  }
-  return false;
-#endif
 
+  // 更新关系
+  sql.clear();
+  for (std::map<uint32, UserStatus>::iterator it=user_statuss.begin(); it!=user_statuss.end(); ++it) {
+    if (it->second.status == 0) {
+      if (!sql.empty()) {
+        sql.push_back(',');
+      }
+      sql.append(base::UintToString(it->first));
+    }
+  }
+
+  int update_count = 0;
+  if (!sql.empty()) {
+    sql = StringPrintf("UPDATE IMGroupRelation SET status = 1 WHERE groupId = %d AND userId IN (%s)", group_id, sql.c_str());
+    update_count = db_conn->Execute(sql);
+  }
+
+  // 更新群计数
+  sql = StringPrintf("UPDATE IMGroup SET memberCnt = memberCnt + %d WHERE groupId = %d LIMIT 1", (insert_count+update_count), group_id);
+  db_conn->Execute(sql);
   return true;
 }
 
-bool ZAresGroupManagerImpl::QuitGroup(uint32 request_user_id, uint32 group_id, const std::vector<uint32>& quit_user_ids) {
-#if 0
-  if (requestUserId <= 0 || userIds == null || userIds.length <= 0
-    || groupId <= 0) {
-      return false;
+bool ZAresGroupManagerImpl::QuitGroup(uint32 request_user_id, const std::vector<uint32>& quit_user_ids, uint32 group_id, const GroupInfo& group) {
+  if (quit_user_ids.empty() || group_id == 0 || request_user_id == 0 || group_id == 0) {
+    return false;
   }
-  if (group == null || group.getGroupId() != groupId
-    || requestUserId != group.getCreateUserId()) { // 群不存在或不是群创建者
-      group = this.getGroupInfo(groupId);
-      if (group == null || group.getGroupId() != groupId
-        || requestUserId != group.getCreateUserId()) {
-          return false;
+
+  // 群不存在或不是群创建者
+  if (request_user_id != group.group_creator_id || group_id != group.group_id) {
+    return false;
+  }
+
+  uint32 now = base::NowMSTime();
+  std::map<uint32, UserStatus> user_statuss;
+
+  std::string s_quit_user_ids;
+  JoinString(quit_user_ids, ',', &s_quit_user_ids);
+  std::string sql = StringPrintf("SELECT status,userId FROM IMGroupRelation WHERE groupId = %d AND userId in (%s) GROUP BY userId ORDER BY id", group_id, s_quit_user_ids.c_str());
+
+  db::ScopedPtr_DatabaseConnection db_conn(db_conn_pool_);
+  scoped_ptr<db::QueryAnswer> answ(db_conn->Query(sql));
+  if (answ.get()) {
+    while (answ->FetchRow()) {
+      UserStatus user_status;
+      answ->GetColumn(0, &user_status.status);
+      answ->GetColumn(1, &user_status.user_id);
+      user_statuss.insert(std::make_pair(user_status.user_id, user_status));
+    }
+  }
+
+  int update_count = 0;
+  // 更新关系
+  sql.clear();
+  for (std::map<uint32, UserStatus>::iterator it=user_statuss.begin(); it!=user_statuss.end(); ++it) {
+    if (it->second.status != 0) {
+      if (!sql.empty()) {
+        sql.push_back(',');
       }
+      sql.append(base::UintToString(it->first));
+    }
   }
 
-  Map<Integer, Integer> mapUserIds = MoguUtil.distinctToMap(userIds); // 去重
-
-  DBManager dbManager = DBManager.getInstance();
-  Connection conn = dbManager.getConnection(DBPoolName.macim_master);
-  PreparedStatement statement = null;
-  ResultSet rs = null;
-  int time = (int) (System.currentTimeMillis() / 1000);
-  int countDelete = 0;
-  try {
-    String selectClause = MoguUtil.getArgsHolder(mapUserIds.size());
-    String sqlGetRelation = "select * from IMGroupRelation where groupId = ? and userId in (";
-    sqlGetRelation += selectClause + ") group by userId";
-    statement = conn.prepareStatement(sqlGetRelation);
-    statement.setInt(1, groupId);
-    Iterator<Integer> itr = mapUserIds.keySet().iterator();
-    int i = 1;
-    while (itr.hasNext()) {
-      statement.setInt(++i, itr.next());
-    }
-    rs = statement.executeQuery();
-
-    List<Integer> updateUids = new ArrayList<Integer>();
-    int status;
-    int uid = 0;
-    while (rs.next()) {
-      status = rs.getInt("status");
-      uid = rs.getInt("userId"); // 在表里，表明是该群成员
-      if (status != 0) { // 在表里，而且未退出群更新状态为退出群就可以了
-        updateUids.add(uid);
-      }
-    }
-
-    // 更新关系
-    int updateSize = updateUids.size();
-    if (updateSize > 0) {
-      String updateClause = MoguUtil.getArgsHolder(updateSize);
-      String sqlUpdateRelation = "update IMGroupRelation set status = 0, updated = ? where groupId = ? and userId in (";
-      sqlUpdateRelation += updateClause + ")";
-      statement = conn.prepareStatement(sqlUpdateRelation);
-      int index = 1;
-      statement.setInt(index++, time);
-      statement.setInt(index++, groupId);
-      for (int j = 0; j < updateSize; j++) {
-        statement.setInt(index++, updateUids.get(j));
-      }
-      countDelete = statement.executeUpdate();
-    }
-
-    // 更新群计数
-    if (countDelete > 0) {
-      String sqlUpdateMemberCnt = "update IMGroup set memberCnt = memberCnt - ? , updated = ? where groupId = ? limit 1";
-      statement = conn.prepareStatement(sqlUpdateMemberCnt);
-      int index = 1;
-      statement.setInt(index++, countDelete);
-      statement.setInt(index++, time);
-      statement.setInt(index++, groupId);
-      statement.executeUpdate();
-    }
-  } catch (SQLException e) {
-    throw e;
-  } finally {
-    dbManager.release(DBPoolName.macim_master, conn, statement, rs);
+  if (!sql.empty()) {
+    sql = StringPrintf("UPDATE IMGroupRelation SET status = 0, updated=%d  WHERE groupId = %d AND userId IN (%s)", now, group_id, sql.c_str());
+    update_count = db_conn->Execute(sql);
   }
-  if (countDelete > 0) { // 成功
-    return true;
-  }
-  return false;
 
-#endif
+  // 更新群计数
+  // update IMGroup set memberCnt = memberCnt - ? , updated = ? where groupId = ? limit 1
+  sql = StringPrintf("UPDATE IMGroup SET memberCnt = memberCnt - %d, updated = %d WHERE groupId = %d LIMIT 1", update_count, now, group_id);
+  db_conn->Execute(sql);
 
   return true;
 }

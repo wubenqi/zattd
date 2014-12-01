@@ -149,12 +149,12 @@ struct ServerMsg {
 
 //////////////////////////////////////////////////////////////////////////
 struct GroupInfo {
-  uint32 ByteSize() const { return 0; }
-  bool ParseFromByteStream(const net::ByteStream& is) { return true; }
-  bool SerializeToByteStream(net::ByteStream* os) const { return true; }
+  uint32 ByteSize() const;
+  bool ParseFromByteStream(const net::ByteStream& is);
+  bool SerializeToByteStream(net::ByteStream* os) const;
 
 #ifdef ZARESD_SERVER_LIB
-  bool ParseFromDatabase(const db::QueryAnswer& answ) { return true; }
+  bool ParseFromDatabase(const db::QueryAnswer& answ);
 #endif
 
   uint32 	group_id;
@@ -261,21 +261,13 @@ public:
     return result;
   }
 
+  virtual void PrintDebugString() const {}
+
 protected:
   BaseTeamTalkPDU(MessagePDUType message_type, BaseAttachData::AttachDataType attach_data_type=BaseAttachData::kAttachDataTypeNull) :
     message::MessagePDU(message_type),
     attach_data_type_(attach_data_type),
     attach_data_(NULL) {}
-
-//   BaseTeamTalkPDU(MessagePDUType message_type) :
-//     message::MessagePDU(message_type),
-//     attach_data_type_(BaseAttachData::kAttachDataTypeNull),
-//     attach_data_(NULL) {}
-//   }
-// 
-//   BaseTeamTalkPDU() :
-//     attach_data_type_(BaseAttachData::kAttachDataTypeNull),
-//     attach_data_(NULL) {}
 
   inline void set_attach_data_type(BaseAttachData::AttachDataType attach_data_type) { attach_data_type_ = attach_data_type; }
 
@@ -314,11 +306,6 @@ protected:
   inline void add_##proterty( const class_name& val ) { proterty##_.push_back(val); } \
   inline std::vector<class_name##*>* mutable_##proterty() { return &proterty##_; }
 
-  // inline void set_##proterty( int intdex, class_type val ) { proterty##_[index] = val; } \
-  // inline const class_name##& proterty() const { return proterty##_; } \
-  // inline void set_##proterty(const class_name##& val) { proterty##_ = val; } \
-  // inline class_name##* mutable_##proterty() { return &proterty##_; }
-
 // 自定义对象，存储的是对象指针，分配和释放需要自己管理
 #define PROPERTY_OBJECTPTR_ARRAY_DECLARE(class_name, proterty) \
   inline int proterty_##size() const { return proterty##_.size(); } \
@@ -327,8 +314,6 @@ protected:
   inline class_name##* add_##proterty() { class_name* val = new class_name(); proterty##_.push_back(val); return val; } \
   inline std::vector<class_name##*>* mutable_##proterty() { return &proterty##_; }
 
-  // inline void set_##proterty(const class_name##& val) { *(mutable_##proterty()) = val; }
-
 // 基本类型，如int
 #define PROPERTY_BASIC_TYPE_ARRAY_DECLARE(class_type, proterty) \
   inline int proterty_##size() const { return proterty##_.size(); } \
@@ -336,16 +321,6 @@ protected:
   inline class_type proterty(int index) const { return proterty##_[index]; } \
   inline void add_##proterty( class_type val ) { proterty##_.push_back(val); } \
   inline std::vector<class_type>* mutable_##proterty() { return &proterty##_; }
-
-// inline void set_##proterty( int intdex, class_type val ) { proterty##_[index] = val; } \
-
-// inline ::google::protobuf::uint32 i_all(int index) const;
-// inline void set_i_all(int index, ::google::protobuf::uint32 value);
-// inline void add_i_all(::google::protobuf::uint32 value);
-// inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
-// i_all() const;
-// inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
-// mutable_i_all();
 
 
 template <class T>
