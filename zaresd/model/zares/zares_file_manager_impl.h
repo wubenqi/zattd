@@ -24,7 +24,7 @@ public:
   virtual size_t GetUserFiles(uint32 to_user_id, std::vector<OfflineFile*>* files);
 
   // 保存一个未接收的离线文件
-  virtual bool SaveFileRecord(uint32 user_id, uint32 to_user_id, const std::string& task_id, const std::string& file_path, uint32 fileSize);
+  virtual bool SaveFileRecord(uint32 user_id, uint32 to_user_id, const std::string& task_id, const std::string& file_path, uint32 file_size);
 
   // 设置一个文件已经被对方接收
   virtual bool DeleteFileRecord(const std::string& task_id);
