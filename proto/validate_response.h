@@ -27,7 +27,7 @@ public:
   PROPERTY_BASIC_TYPE_DECLARE(uint32, result);
   PROPERTY_OBJECTPTR_DECLARE(UserInfo, user);
 
-  virtual uint32 ByteSize() { return 0; }
+  virtual uint32 ByteSize() const;
 
 protected:
   virtual bool ParseFromByteStream(const net::ByteStream& is);

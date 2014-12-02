@@ -27,12 +27,11 @@ int UnreadMsgRequestHandler::Execute(ZAresHandlerThread* context, uint64 session
   MessageManager* message_mananger = ModelMainManager::GetInstance()->GetMessageManager();
 
   MsgListResponse msg_list_response;
+  msg_list_response.SetReserved(unread_msg_request->GetReserved());
   msg_list_response.set_request_cmd_id(GetHighInt16ByInt32(message->message_type()));
   msg_list_response.set_from_user_id(unread_msg_request->from_user_id());
   msg_list_response.set_to_user_id(unread_msg_request->to_user_id());
-
-  // db_write_response.set_to_user_id(unread_msg_count_request->user_id());
-  msg_list_response.MutableAttachData()->CopyFrom(unread_msg_request->GetAttachData());
+  msg_list_response.SetAttachData(*unread_msg_request->GetAttachData());
 
   uint32 count = counter_mananger->GetUserFriendUnreadCount(unread_msg_request->from_user_id(), unread_msg_request->to_user_id());
   count = count > UNREAD_MAX_COUNTER ? UNREAD_MAX_COUNTER : count;

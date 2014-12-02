@@ -23,8 +23,9 @@ int FriendListRequestHandler::Execute(ZAresHandlerThread* context, uint64 sessio
   CAST_PROTO_MESSAGE(FriendListRequest, friend_list_request);
 
   FriendListResponse friend_list_response;
+  friend_list_response.SetReserved(friend_list_request->GetReserved());
   friend_list_response.set_from_user_id(friend_list_request->user_id());
-  friend_list_response.MutableAttachData()->CopyFrom(friend_list_request->GetAttachData());
+  friend_list_response.SetAttachData(*friend_list_request->GetAttachData());
 
   if (friend_list_request->user_id() > 0) {
     RelationshipManager* relationship_manager = ModelMainManager::GetInstance()->GetRelationshipManager();

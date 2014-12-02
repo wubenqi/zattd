@@ -24,8 +24,9 @@ int DepartmentRequestHandler::Execute(ZAresHandlerThread* context, uint64 sessio
 
   LOG(INFO) << "DepartmentRequestHandler::Execute(): req_user_id = " << department_request->req_user_id();
   DepartmentResponse department_response;
+  department_response.SetReserved(department_request->GetReserved());
   department_response.set_req_user_id(department_request->req_user_id());
-  department_response.MutableAttachData()->CopyFrom(department_request->GetAttachData());
+  department_response.SetAttachData(*department_request->GetAttachData());
 
   DepartmentManager* depart_manager = ModelMainManager::GetInstance()->GetDepartmentManager();
   if(!depart_manager->GetDepartmentInfos(department_response.mutable_depart_list())) {

@@ -87,11 +87,12 @@ int RemoveSessionRequestHandler::Execute(ZAresHandlerThread* context, uint64 ses
   GroupManager* group_manager = ModelMainManager::GetInstance()->GetGroupManager();
 
   RemoveSessionResponse remove_session_response;
+  remove_session_response.SetReserved(remove_session_request->GetReserved());
   remove_session_response.set_req_user_id(remove_session_request->req_user_id());
   remove_session_response.set_result(0);
   remove_session_response.set_session_id(remove_session_request->session_id());
   remove_session_response.set_session_type(remove_session_request->session_type());
-  remove_session_response.MutableAttachData()->CopyFrom(remove_session_request->GetAttachData());
+  remove_session_response.SetAttachData(*remove_session_request->GetAttachData());
   
   bool result = true;
   if (remove_session_request->req_user_id() == 0 ||

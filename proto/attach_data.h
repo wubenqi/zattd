@@ -66,9 +66,13 @@ public:
 
 protected:
   explicit BaseAttachData(AttachDataType attach_data_type) :
-    attach_data_type_(attach_data_type) {}
+    attach_data_type_(attach_data_type),
+    attach_data_len_(0) {}
 
   AttachDataType attach_data_type_;
+
+  uint32 attach_data_len_;
+
   uint32 		type_;
   uint32		handle_;
   uint32    service_type_;

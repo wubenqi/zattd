@@ -13,7 +13,7 @@
 class GroupUserListResponse : public BaseTeamTalkPDU {
 public:
   GroupUserListResponse() :
-    BaseTeamTalkPDU(MESSAGE_GROUP_USER_LIST_RESPONSE) {}
+    BaseTeamTalkPDU(MESSAGE_GROUP_USER_LIST_RESPONSE, BaseAttachData::kAttachDataTypeDB) {}
 
   virtual ~GroupUserListResponse() {}
 

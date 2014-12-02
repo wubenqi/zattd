@@ -25,8 +25,9 @@ int GroupListRequestHandler::Execute(ZAresHandlerThread* context, uint64 session
   GroupManager* group_manager = ModelMainManager::GetInstance()->GetGroupManager();
 
   GroupListResponse group_list_response;
+  group_list_response.SetReserved(group_list_request->GetReserved());
   group_list_response.set_req_user_id(group_list_request->user_id());
-  group_list_response.MutableAttachData()->CopyFrom(group_list_request->GetAttachData());
+  group_list_response.SetAttachData(*group_list_request->GetAttachData());
 
   std::vector<GroupInfo*>* groups = group_list_response.mutable_group_list();
   if (group_manager->GetGroupsByUserId(group_list_request->user_id(), true, groups) > 0) {

@@ -24,9 +24,10 @@ int GroupChangeMemberRequestHandler::Execute(ZAresHandlerThread* context, uint64
   GroupManager* group_manager = ModelMainManager::GetInstance()->GetGroupManager();
 
   GroupChangeMemberResponse group_change_member_response;
+  group_change_member_response.SetReserved(group_change_member_request->GetReserved());
   group_change_member_response.set_req_user_id(group_change_member_request->req_user_id());
   *(group_change_member_response.mutable_user_list()) = group_change_member_request->user_list();
-  group_change_member_response.MutableAttachData()->CopyFrom(group_change_member_request->GetAttachData());
+  group_change_member_response.SetAttachData(*group_change_member_request->GetAttachData());
 
   uint32 result = 0;
   uint32 change_type = 0;

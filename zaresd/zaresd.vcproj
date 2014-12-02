@@ -631,6 +631,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\proto\all_user_response.cc"
+					>
+				</File>
+				<File
 					RelativePath="..\proto\all_user_response.h"
 					>
 				</File>

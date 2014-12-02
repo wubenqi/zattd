@@ -16,7 +16,7 @@
 #include "db/database_util.h"
 
 #include "zaresd/const_zaresd_defines.h"
-#include "zaresd/model/relationship_manager.h"
+#include "zaresd/model/zares/zares_relationship_manager_impl.h"
 
 size_t ZAresMessageManagerImpl::GetMessages(uint32 from_user_id, uint32 to_user_id, uint32 offset, int count, std::vector<ServerMsg*>* messages) {
 

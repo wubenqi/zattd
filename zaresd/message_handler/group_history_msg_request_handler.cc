@@ -26,10 +26,11 @@ int GroupHistoryMsgRequestHandler::Execute(ZAresHandlerThread* context, uint64 s
   MessageManager* message_manager = ModelMainManager::GetInstance()->GetMessageManager();
 
   GroupMsgListResponse group_msg_list_response;
+  group_msg_list_response.SetReserved(group_history_msg_request->GetReserved());
   group_msg_list_response.set_req_user_id(group_history_msg_request->req_user_id());
   group_msg_list_response.set_request_cmd_id(GetHighInt16ByInt32(message->message_type()));
   group_msg_list_response.set_request_cmd_id(group_history_msg_request->group_id());
-  group_msg_list_response.MutableAttachData()->CopyFrom(group_history_msg_request->GetAttachData());
+  group_msg_list_response.SetAttachData(*group_history_msg_request->GetAttachData());
 
   message_manager->GetGroupMessages(
       group_history_msg_request->group_id(),

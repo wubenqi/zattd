@@ -33,6 +33,7 @@ int MsgReadAckHandler::Execute(ZAresHandlerThread* context, uint64 session_id, c
 
   CounterManager* counter_manager = ModelMainManager::GetInstance()->GetCounterManager();
   DBWriteResponse db_write_response;
+  db_write_response.SetReserved(msg_read_ack->GetReserved());
   db_write_response.set_request_id(msg_read_ack->request_id());
   db_write_response.set_result(0);
   db_write_response.set_request_pdu_type(GetHighInt16ByInt32(message->message_type()));

@@ -23,9 +23,10 @@ int FileHasOfflineReqHandler::Execute(ZAresHandlerThread* context, uint64 sessio
   FileManager* file_manager = ModelMainManager::GetInstance()->GetFileManager();
 
   FileHasOfflineRes file_has_offline_res;
+  file_has_offline_res.SetReserved(file_has_offline_req->GetReserved());
   file_has_offline_res.set_req_user_id(file_has_offline_req->user_id());
-  file_has_offline_res.MutableAttachData()->CopyFrom(file_has_offline_req->GetAttachData());
-  
+  file_has_offline_res.SetAttachData(*file_has_offline_req->GetAttachData());
+ 
   file_manager->GetUserFiles(file_has_offline_req->user_id(), file_has_offline_res.mutable_file_list());
 
   context->SendSessionData(session_id, file_has_offline_res);

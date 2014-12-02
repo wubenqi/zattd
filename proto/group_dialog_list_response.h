@@ -13,7 +13,7 @@
 class GroupDialogListResponse : public BaseTeamTalkPDU {
 public:
   GroupDialogListResponse() :
-    BaseTeamTalkPDU(MESSAGE_GROUP_DIALOG_LIST_RESPONSE) {}
+    BaseTeamTalkPDU(MESSAGE_GROUP_DIALOG_LIST_RESPONSE, BaseAttachData::kAttachDataTypeDB) {}
 
   virtual ~GroupDialogListResponse() {
     STLDeleteElements(&group_list_);
@@ -23,9 +23,7 @@ public:
   PROPERTY_OBJECTPTR_ARRAY_DECLARE(GroupInfo, group_list);
 
   //////////////////////////////////////////////////////////////////////////
-  virtual uint32 ByteSize() const {
-    return BaseTeamTalkPDU::ByteSize() + sizeof(req_user_id_) + CalculateContainerByteSize(group_list_);
-  }
+  virtual uint32 ByteSize() const;
 
 protected:
   virtual bool ParseFromByteStream(const net::ByteStream& is);

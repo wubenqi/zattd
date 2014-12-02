@@ -24,8 +24,9 @@ int UsersInfoRequestHandler::Execute(ZAresHandlerThread* context, uint64 session
   UserManager* user_manager = ModelMainManager::GetInstance()->GetUserManager();
 
   UsersInfoResponse users_info_response;
+  users_info_response.SetReserved(users_info_request->GetReserved());
   users_info_response.set_from_user_id(users_info_request->from_user_id());
-  users_info_response.MutableAttachData()->CopyFrom(users_info_request->GetAttachData());
+  users_info_response.SetAttachData(*users_info_request->GetAttachData());
 
   if (users_info_request->from_user_id() == 0 || users_info_request->user_id_list().empty()) {
     LOG(ERROR) << "users_info_request: from_user_id = 0 || user_id_list is empty!!!!";

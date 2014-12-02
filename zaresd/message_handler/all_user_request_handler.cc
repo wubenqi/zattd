@@ -21,8 +21,9 @@ int AllUserRequestHandler::Execute(ZAresHandlerThread* context, uint64 session_i
   CAST_PROTO_MESSAGE(AllUserRequest, all_user_request);
 
   AllUserResponse all_user_response;
+  all_user_response.SetReserved(all_user_request->GetReserved());
   all_user_response.set_from_user_id(all_user_request->req_user_id());
-  all_user_response.MutableAttachData()->CopyFrom(all_user_request->GetAttachData());
+  all_user_response.SetAttachData(*all_user_request->GetAttachData());
 
   if (all_user_request->req_user_id()>0) {
     UserManager* user_manager = ModelMainManager::GetInstance()->GetUserManager();

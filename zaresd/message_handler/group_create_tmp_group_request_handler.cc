@@ -24,8 +24,9 @@ int GroupCreateTmpGroupRequestHandler::Execute(ZAresHandlerThread* context, uint
   GroupManager* group_manager = ModelMainManager::GetInstance()->GetGroupManager();
 
   GroupCreateTmpGroupResponse group_create_tmp_group_response;
+  group_create_tmp_group_response.SetReserved(group_create_tmp_group_request->GetReserved());
   group_create_tmp_group_response.set_req_user_id(group_create_tmp_group_request->req_user_id());
-  group_create_tmp_group_response.MutableAttachData()->CopyFrom(group_create_tmp_group_request->GetAttachData());
+  group_create_tmp_group_response.SetAttachData(*group_create_tmp_group_request->GetAttachData());
 
   uint32 result = 1;
   uint32 group_id = 0;

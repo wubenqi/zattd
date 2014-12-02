@@ -5,21 +5,7 @@
 // By: wubenqi<wubenqi@gmail.com>
 //
 
-#include "proto/users_info_response.h"
-
-// bool UsersInfoResponse::ParseFromByteStream(const net::ByteStream& is) {
-//   is >> from_user_id_;
-//   PARSE_OBJECTPTR_ARRAY_IMPLICIT(UserInfo, user_info_list_);
-// 
-//   return !is.Fail();
-// }
-// 
-// bool UsersInfoResponse::SerializeToByteStream(net::ByteStream* os) const {
-//   (*os) << from_user_id_;
-//   SERIALIZE_OBJECTPTR_ARRAY_IMPLICIT(user_info_list_);
-// 
-//   return !os->Fail();
-// }
+#include "proto/all_user_response.h"
 
 namespace {
 
@@ -57,7 +43,7 @@ bool SerializeToByteStream(const UserInfo& user_info,  net::ByteStream* os) {
 
 }
 
-uint32 UsersInfoResponse::ByteSize() const {
+uint32 AllUserResponse::ByteSize() const {
   uint32 size = BaseTeamTalkPDU::ByteSize();
   size += sizeof(from_user_id_);
   uint32 users_size = user_info_list_.size();
@@ -70,7 +56,7 @@ uint32 UsersInfoResponse::ByteSize() const {
 }
 
 
-bool UsersInfoResponse::ParseFromByteStream(const net::ByteStream& is) {
+bool AllUserResponse::ParseFromByteStream(const net::ByteStream& is) {
   is >> from_user_id_;
 
   PARSE_OBJECTPTR_ARRAY_IMPLICIT(UserInfo, user_info_list_);
@@ -78,7 +64,7 @@ bool UsersInfoResponse::ParseFromByteStream(const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool UsersInfoResponse::SerializeToByteStream(net::ByteStream* os) const {
+bool AllUserResponse::SerializeToByteStream(net::ByteStream* os) const {
 //   (*os) << from_user_id_;
 //   SERIALIZE_OBJECTPTR_ARRAY_IMPLICIT(user_info_list_);
 

@@ -16,7 +16,6 @@
 //////////////////////////////////////////////////////////////////////////
 uint32 UserInfo::ByteSize() const {
   return sizeof(user_id) +
-    SIZEOF_STRING(name) +
     SIZEOF_STRING(nick_name) +
     SIZEOF_STRING(avatar_url) +
     SIZEOF_STRING(title) +
@@ -26,13 +25,11 @@ uint32 UserInfo::ByteSize() const {
     sizeof(depart_id) +
     sizeof(job_num) +
     SIZEOF_STRING(telphone) +
-    SIZEOF_STRING(email) +
-    sizeof(user_updated);
+    SIZEOF_STRING(email);
 }
 
 bool UserInfo::ParseFromByteStream(const net::ByteStream& is) {
   is >> user_id;
-  is.ReadString(name);
   is.ReadString(nick_name);
   is.ReadString(avatar_url);
   is.ReadString(title);
@@ -43,14 +40,12 @@ bool UserInfo::ParseFromByteStream(const net::ByteStream& is) {
     >> job_num;
   is.ReadString(telphone);
   is.ReadString(email);
-  is >> user_updated;
 
   return !is.Fail();
 }
 
 bool UserInfo::SerializeToByteStream(net::ByteStream* os) const {
   (*os) << user_id;
-  os->WriteString(name);
   os->WriteString(nick_name);
   os->WriteString(avatar_url);
   os->WriteString(title);
@@ -61,7 +56,6 @@ bool UserInfo::SerializeToByteStream(net::ByteStream* os) const {
     << job_num;
   os->WriteString(telphone);
   os->WriteString(email);
-  (*os) << user_updated;
 
   return !os->Fail();
 }
@@ -230,8 +224,9 @@ bool GroupInfo::ParseFromByteStream(const net::ByteStream& is) {
   is >> group_id;
   is.ReadString(group_name);
   is.ReadString(group_avatar);
-  is >> group_creator_id
-    >> group_type
+  is >> group_type
+    >> group_creator_id
+    
     >> group_updated;
   uint32 group_memeber_list_size = 0;
   is >> group_memeber_list_size;
@@ -285,17 +280,39 @@ bool GroupInfo::ParseFromDatabase(const db::QueryAnswer& answ) {
 #endif
 
 //////////////////////////////////////////////////////////////////////////
-const BaseAttachData* BaseTeamTalkPDU::GetAttachData() const {
-  return attach_data_;
-}
-
-BaseAttachData* BaseTeamTalkPDU::MutableAttachData() {
-  if (attach_data_ == NULL) {
-    attach_data_ = BaseAttachData::CreateAttachData(attach_data_type_);
+bool BaseTeamTalkPDU::ParseFromArray(const void* data, uint32 data_len) {
+  net::ByteStream is(data, data_len);
+  bool result = ParseFromByteStream(is);
+  if (result && HasAttachData()) {
+    is.ReadString(attach_data_);
+    result = !is.Fail();
+    // result = MutableAttachData()->ParseFromByteStream(is);
   }
-
-  return attach_data_;
+  return result;
 }
+
+bool BaseTeamTalkPDU::SerializeToArray(void* data, uint32 data_len) const {
+  net::ByteStream os(data, data_len);
+  bool result = SerializeToByteStream(&os);
+  if (result && HasAttachData()) {
+    os.WriteString(attach_data_);
+    // result = attach_data_->SerializeToByteStream(&os);
+    result = !os.Fail();
+  }
+  return result;
+}
+
+//const BaseAttachData* BaseTeamTalkPDU::GetAttachData() const {
+//  return attach_data_;
+//}
+//
+//BaseAttachData* BaseTeamTalkPDU::MutableAttachData() {
+//  if (attach_data_ == NULL) {
+//    attach_data_ = BaseAttachData::CreateAttachData(attach_data_type_);
+//  }
+//
+//  return attach_data_;
+//}
 
 bool BaseTeamTalkPDU::ParseFromByteStream(const net::ByteStream& is) {
   return true;
@@ -303,6 +320,36 @@ bool BaseTeamTalkPDU::ParseFromByteStream(const net::ByteStream& is) {
 
 bool BaseTeamTalkPDU::SerializeToByteStream(net::ByteStream* os) const {
   return true;
+}
+
+void BaseTeamTalkPDU::SetAttachData(const std::string& data) {
+  DCHECK(HasAttachData()) << "Attach_data_type must kAttachDataTypeDB or kAttachDataTypePdu";
+  if (HasAttachData()) {
+    attach_data_ = data;
+  }
+}
+
+void BaseTeamTalkPDU::SetAttachData(const char*data, uint32 data_len) {
+  DCHECK(HasAttachData()) << "Attach_data_type must kAttachDataTypeDB or kAttachDataTypePdu";
+  if (HasAttachData()) {
+    attach_data_.assign(data, data_len);
+  }
+}
+
+const std::string* BaseTeamTalkPDU::GetAttachData() const {
+  if (HasAttachData()) {
+    return &attach_data_;
+  } else {
+    return NULL;
+  }
+}
+
+std::string* BaseTeamTalkPDU::MutableAttachData() {
+  if (HasAttachData()) {
+    return &attach_data_;
+  } else {
+    return NULL;
+  }
 }
 
 template <>

@@ -32,6 +32,7 @@ int GroupMsgReadAckHandler::Execute(ZAresHandlerThread* context, uint64 session_
   }
 
   DBWriteResponse db_write_response;
+  db_write_response.SetReserved(group_msg_read_ack->GetReserved());
   db_write_response.set_request_id(0);
   db_write_response.set_result(result);
   db_write_response.set_request_pdu_type(GetHighInt16ByInt32(group_msg_read_ack->message_type()));

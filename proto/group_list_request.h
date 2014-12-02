@@ -13,7 +13,7 @@
 class GroupListRequest : public BaseTeamTalkPDU {
 public:
   GroupListRequest() :
-    BaseTeamTalkPDU(MESSAGE_GROUP_LIST_REQUEST) {}
+    BaseTeamTalkPDU(MESSAGE_GROUP_LIST_REQUEST, BaseAttachData::kAttachDataTypeDB) {}
 
   virtual ~GroupListRequest() {}
 

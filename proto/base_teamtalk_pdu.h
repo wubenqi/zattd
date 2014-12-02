@@ -228,48 +228,42 @@ struct OfflineFile {
 class BaseTeamTalkPDU : public message::MessagePDU {
 public:
   virtual ~BaseTeamTalkPDU() {
-    if (attach_data_) {
-      delete attach_data_;
-      attach_data_ = NULL;
-    }
+    //if (attach_data_) {
+    //  delete attach_data_;
+    //  attach_data_ = NULL;
+    //}
   }
 
   // 注意，返回可能为NULL,调用者需要小心
-  const BaseAttachData* GetAttachData() const;
-  BaseAttachData* MutableAttachData();
+  // const BaseAttachData* GetAttachData() const;
+  // BaseAttachData* MutableAttachData();
 
   // From message::MessagePDU
   virtual uint32 ByteSize() const {
-    return attach_data_ ? attach_data_->ByteSize() : 0;
+    return (attach_data_type_!=BaseAttachData::kAttachDataTypeNull) ? (SIZEOF_STRING(attach_data_)) : 0;
   }
 
-  virtual bool ParseFromArray(const void* data, uint32 data_len) {
-    net::ByteStream is(data, data_len);
-    bool result = ParseFromByteStream(is);
-    if (result && attach_data_) {
-      result = attach_data_->ParseFromByteStream(is);
-    }
-    return result;
-  }
-
-  virtual bool SerializeToArray(void* data, uint32 data_len) const {
-    net::ByteStream os(data, data_len);
-    bool result = SerializeToByteStream(&os);
-    if (result && attach_data_) {
-      result = attach_data_->SerializeToByteStream(&os);
-    }
-    return result;
-  }
+  virtual bool ParseFromArray(const void* data, uint32 data_len);
+  virtual bool SerializeToArray(void* data, uint32 data_len) const;
 
   virtual void PrintDebugString() const {}
+
+  inline bool HasAttachData() const {
+    return attach_data_type_==BaseAttachData::kAttachDataTypeDB || attach_data_type_ == BaseAttachData::kAttachDataTypePDU;
+  }
+
+  void SetAttachData(const std::string& data);
+  void SetAttachData(const char*data, uint32 data_len);
+
+  const std::string* GetAttachData() const;
+  std::string* MutableAttachData();
 
 protected:
   BaseTeamTalkPDU(MessagePDUType message_type, BaseAttachData::AttachDataType attach_data_type=BaseAttachData::kAttachDataTypeNull) :
     message::MessagePDU(message_type),
-    attach_data_type_(attach_data_type),
-    attach_data_(NULL) {}
+    attach_data_type_(attach_data_type) {}
 
-  inline void set_attach_data_type(BaseAttachData::AttachDataType attach_data_type) { attach_data_type_ = attach_data_type; }
+  // inline void set_attach_data_type(BaseAttachData::AttachDataType attach_data_type) { attach_data_type_ = attach_data_type; }
 
   virtual bool ParseFromByteStream(const net::ByteStream& is);
   virtual bool SerializeToByteStream(net::ByteStream* os) const;
@@ -277,7 +271,10 @@ protected:
   // 每个PDU只使用一种AttachData
   // 对象生成的时候就设定是否要使用attach_data以及使用哪种类型的AttachData
   BaseAttachData::AttachDataType attach_data_type_;
-  BaseAttachData* attach_data_;
+  // BaseAttachData* attach_data_;
+
+  std::string attach_data_;
+  uint16 reserved_;
 };
 
 // 定义成员宏

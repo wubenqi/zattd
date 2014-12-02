@@ -8,14 +8,30 @@
 #ifndef PROTO_ALL_USER_RESPONSE_H_
 #define PROTO_ALL_USER_RESPONSE_H_
 
-#include "proto/users_info_response.h"
+#include "proto/base_teamtalk_pdu.h"
 
-class AllUserResponse : public UsersInfoResponse {
+class AllUserResponse : public BaseTeamTalkPDU {
 public:
   AllUserResponse() :
-    UsersInfoResponse(MESSAGE_ALL_USER_RESPONSE) {}
+      BaseTeamTalkPDU(MESSAGE_ALL_USER_RESPONSE, BaseAttachData::kAttachDataTypeDB) {}
 
-  virtual ~AllUserResponse() {}
+  virtual ~AllUserResponse() {
+    STLDeleteElements(&user_info_list_);
+  }
+
+  //////////////////////////////////////////////////////////////////////////
+  PROPERTY_BASIC_TYPE_DECLARE(uint32, from_user_id);
+  PROPERTY_OBJECTPTR_ARRAY_DECLARE(UserInfo, user_info_list);
+
+  //////////////////////////////////////////////////////////////////////////
+  virtual uint32 ByteSize() const;
+
+protected:
+  virtual bool ParseFromByteStream(const net::ByteStream& is);
+  virtual bool SerializeToByteStream(net::ByteStream* os) const;
+
+  uint32 from_user_id_;
+  std::vector<UserInfo*> user_info_list_;
 };
 
 #endif // PROTO_ALL_USER_REQUEST_H_

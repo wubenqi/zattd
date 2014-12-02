@@ -27,10 +27,11 @@ int HistoryMsgRequestHandler::Execute(ZAresHandlerThread* context, uint64 sessio
   MessageManager* message_manager = ModelMainManager::GetInstance()->GetMessageManager();
 
   MsgListResponse msg_list_response;
+  msg_list_response.SetReserved(history_msg_request->GetReserved());
   msg_list_response.set_request_cmd_id(GetHighInt16ByInt32(message->message_type()));
   msg_list_response.set_from_user_id(history_msg_request->from_user_id());
   msg_list_response.set_to_user_id(history_msg_request->to_user_id());
-  msg_list_response.MutableAttachData()->CopyFrom(history_msg_request->GetAttachData());
+  msg_list_response.SetAttachData(*history_msg_request->GetAttachData());
 
 
   uint32 count = history_msg_request->msg_count() > MAX_HISTORY_MESSAGE_COUNT ? MAX_HISTORY_MESSAGE_COUNT : history_msg_request->msg_count();

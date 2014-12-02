@@ -28,6 +28,7 @@ int FileAddOfflineReqHandler::Execute(ZAresHandlerThread* context, uint64 sessio
   // result 0,1,2
 
   DBWriteResponse db_write_response;
+  db_write_response.SetReserved(file_add_offline_req->GetReserved());
   db_write_response.set_request_id(file_add_offline_req->req_user_id());
   db_write_response.set_result(0);
   db_write_response.set_request_pdu_type(GetHighInt16ByInt32(message->message_type()));

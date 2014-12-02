@@ -26,8 +26,9 @@ int UnreadMsgCountRequestHandler::Execute(ZAresHandlerThread* context, uint64 se
   CounterManager* counter_manager = ModelMainManager::GetInstance()->GetCounterManager();
 
   UnreadMsgCountResponse unread_msg_count_response;
+  unread_msg_count_response.SetReserved(unread_msg_count_request->GetReserved());
   unread_msg_count_response.set_to_user_id(unread_msg_count_request->user_id());
-  unread_msg_count_response.MutableAttachData()->CopyFrom(unread_msg_count_request->GetAttachData());
+  unread_msg_count_response.SetAttachData(*unread_msg_count_request->GetAttachData());
 
   Counter user_unread_count;
   counter_manager->GetUnreadMsgCount(unread_msg_count_request->user_id(), &user_unread_count);

@@ -24,8 +24,10 @@ int ValidateRequestHandler::Execute(ZAresHandlerThread* context, uint64 session_
 
   // 2. 取出用户信息，返回给请求客户端
   ValidateResponse validate_response;
+  validate_response.SetReserved(validate_request->GetReserved());
+  validate_response.SetReserved(validate_request->GetReserved());
   validate_response.set_user_name(validate_request->user_name());
-  validate_response.MutableAttachData()->CopyFrom(validate_request->GetAttachData());
+  validate_response.SetAttachData(*validate_request->GetAttachData());
   validate_response.set_result(1);
 
   if (validate_request->user_name().empty() 

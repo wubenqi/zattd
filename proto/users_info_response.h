@@ -12,8 +12,8 @@
 
 class UsersInfoResponse : public BaseTeamTalkPDU {
 public:
-  explicit UsersInfoResponse(uint32 message_type = MESSAGE_USERS_INFO_RESPONSE) :
-    BaseTeamTalkPDU(message_type, BaseAttachData::kAttachDataTypeDB) {}
+  UsersInfoResponse() :
+    BaseTeamTalkPDU(MESSAGE_USERS_INFO_RESPONSE, BaseAttachData::kAttachDataTypeDB) {}
 
   virtual ~UsersInfoResponse() {
     STLDeleteElements(&user_info_list_);
@@ -24,9 +24,7 @@ public:
   PROPERTY_OBJECTPTR_ARRAY_DECLARE(UserInfo, user_info_list);
 
   //////////////////////////////////////////////////////////////////////////
-  virtual uint32 ByteSize() const {
-    return BaseTeamTalkPDU::ByteSize() + sizeof(from_user_id_) + CalculateContainerByteSize(user_info_list_);
-  }
+  virtual uint32 ByteSize() const;
 
 protected:
   virtual bool ParseFromByteStream(const net::ByteStream& is);

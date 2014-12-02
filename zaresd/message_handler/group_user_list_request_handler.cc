@@ -24,9 +24,10 @@ int GroupUserListRequestHandler::Execute(ZAresHandlerThread* context, uint64 ses
   GroupManager* group_manager = ModelMainManager::GetInstance()->GetGroupManager();
 
   GroupUserListResponse group_user_list_response;
+  group_user_list_response.SetReserved(group_user_list_request->GetReserved());
   group_user_list_response.set_req_user_id(group_user_list_request->req_user_id());
   group_user_list_response.set_group_id(group_user_list_request->group_id());
-  group_user_list_response.MutableAttachData()->CopyFrom(group_user_list_request->GetAttachData());
+  group_user_list_response.SetAttachData(*group_user_list_request->GetAttachData());
 
   GroupInfo group;
   if (group_manager->GetGroupInfo(group_user_list_request->group_id(), &group)) {

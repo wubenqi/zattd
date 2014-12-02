@@ -26,6 +26,7 @@ int MsgDataHandler::Execute(ZAresHandlerThread* context, uint64 session_id, cons
   MessageManager* message_manager = ModelMainManager::GetInstance()->GetMessageManager();
 
   DBWriteResponse db_write_response;
+  db_write_response.SetReserved(msg_data->GetReserved());
   db_write_response.set_request_id(msg_data->request_id());
   db_write_response.set_result(0);
   db_write_response.set_request_pdu_type(GetHighInt16ByInt32(message->message_type()));

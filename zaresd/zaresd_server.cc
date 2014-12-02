@@ -24,6 +24,7 @@
 #include "zaresd/client_comm_manager.h"
 #include "zaresd/message_handler/message_handler.h"
 #include "zaresd/zares_handler_thread_manager.h"
+#include "zaresd/model/model_main_manager.h"
 
 ZAresdServer::ZAresdServer() 
 : BaseDaemon() {
@@ -45,6 +46,7 @@ int	ZAresdServer::Initialize( int argc, char** argv ) {
   // 客户端连接处理
   ConfigInfo* config = ConfigInfo::GetInstance();
 
+  ModelMainManager::GetInstance()->Initialize("zares");
 
   ZAresHandlerThreadManager* zares_handler_thread_manager = ZAresHandlerThreadManager::GetInstance();
   zares_handler_thread_manager->Initialize(config->db_addr());

@@ -13,7 +13,7 @@
 class AllUserRequest : public BaseTeamTalkPDU {
 public:
   AllUserRequest() :
-    BaseTeamTalkPDU(MESSAGE_USERS_INFO_REQUEST, BaseAttachData::kAttachDataTypeDB) {}
+    BaseTeamTalkPDU(MESSAGE_ALL_USER_REQUEST, BaseAttachData::kAttachDataTypeDB) {}
 
   virtual ~AllUserRequest() {}
 

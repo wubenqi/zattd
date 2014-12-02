@@ -67,7 +67,7 @@ size_t ZAresGroupManagerImpl::GetGroupIdsByUserId(uint32 user_id, bool is_fixed_
 
   std::string sql = base::StringPrintf(
     "SELECT groupId FROM IMGroup WHERE groupId IN "
-    "SELECT groupId FROM (SELECT groupId FROM IMGroupRelation WHERE userId=%d AND status>=1 %s ORDER BY created DESC, id DESC LIMIT %d) AS tp",
+    "(SELECT groupId FROM (SELECT groupId FROM IMGroupRelation WHERE userId=%d AND status>=1 %s ORDER BY created DESC, id DESC LIMIT %d) AS tp)",
     user_id,
     (is_fixed_group ? " AND groupType = 1 " : ""),
     (is_fixed_group ? 200 : 5000));

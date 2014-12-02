@@ -9,6 +9,19 @@
 
 #include "db/database_util.h"
 
+uint32 ValidateResponse::ByteSize() const {
+  uint32 s1 = BaseTeamTalkPDU::ByteSize();
+  uint32 s2 = SIZEOF_STRING(user_name_) + sizeof(result_);
+  uint32 s3 = user_ ? user_->ByteSize() : 0;
+
+  return s1+s2+s3;
+
+  //return BaseTeamTalkPDU::ByteSize() + 
+  //  SIZEOF_STRING(user_name_) +
+  //  sizeof(result_) + 
+  //  user_ ? user_->ByteSize() : 0;
+}
+
 bool ValidateResponse::ParseFromByteStream(const net::ByteStream& is) {
   is.ReadString(user_name_);
   is >> result_;
@@ -22,7 +35,7 @@ bool ValidateResponse::ParseFromByteStream(const net::ByteStream& is) {
 bool ValidateResponse::SerializeToByteStream(net::ByteStream* os) const {
   os->WriteString(user_name_);
   (*os) << result_;
-  if (result_!=0) {
+  if (result_==0) {
     user_->SerializeToByteStream(os);
   }
   return !os->Fail();

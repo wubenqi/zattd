@@ -24,8 +24,9 @@ int GroupDialogListRequestHandler::Execute(ZAresHandlerThread* context, uint64 s
   GroupManager* group_manager = ModelMainManager::GetInstance()->GetGroupManager();
 
   GroupDialogListResponse group_dialog_list_response;
+  group_dialog_list_response.SetReserved(group_dialog_list_request->GetReserved());
   group_dialog_list_response.set_req_user_id(group_dialog_list_request->user_id());
-  group_dialog_list_response.MutableAttachData()->CopyFrom(group_dialog_list_request->GetAttachData());
+  group_dialog_list_response.SetAttachData(*group_dialog_list_request->GetAttachData());
   
   if (group_dialog_list_request->user_id() > 0) {
 

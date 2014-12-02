@@ -88,11 +88,12 @@ bool BaseAttachData::CopyFrom(const BaseAttachData* other) {
 }
 
 uint32 BaseAttachData::ByteSize() const {
-  return sizeof(type_) + sizeof(handle_) + sizeof(service_type_);
+  return sizeof(attach_data_len_) + sizeof(type_) + sizeof(handle_) + sizeof(service_type_);
 }
 
 bool BaseAttachData::ParseFromByteStream(const net::ByteStream& is) {
-  is >> type_
+  is >> attach_data_len_
+     >> type_
      >> handle_
      >> service_type_;
 
@@ -100,7 +101,9 @@ bool BaseAttachData::ParseFromByteStream(const net::ByteStream& is) {
 }
 
 bool BaseAttachData::SerializeToByteStream(net::ByteStream* os) const {
-  (*os) << type_
+  //attach_data_len_ = ByteSize()-sizeof(attach_data_len_);
+  (*os) << (ByteSize()-sizeof(attach_data_len_))
+        << type_
         << handle_
         << service_type_;
   return !os->Fail();

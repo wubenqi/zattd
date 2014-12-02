@@ -25,8 +25,9 @@ int GroupUnreadMsgCountRequestHandler::Execute(ZAresHandlerThread* context, uint
   CounterManager* counter_manger = ModelMainManager::GetInstance()->GetCounterManager();
 
   GroupUnreadMsgCountResponse group_unread_msg_count_response;
+  group_unread_msg_count_response.SetReserved(group_unread_msg_count_request->GetReserved());
   group_unread_msg_count_response.set_req_user_id(group_unread_msg_count_request->req_user_id());
-  group_unread_msg_count_response.MutableAttachData()->CopyFrom(group_unread_msg_count_request->GetAttachData());
+  group_unread_msg_count_response.SetAttachData(*group_unread_msg_count_request->GetAttachData());
 
   std::vector<uint32> group_ids;
   std::map<uint32, uint32> unreads;
