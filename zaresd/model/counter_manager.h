@@ -21,6 +21,9 @@ public:
   inline const std::map<uint32, uint32>& unread_count() const { return unread_count_; }
   inline const std::map<uint32, uint32>& msg_count() const { return msg_count_; }
 
+  inline std::map<uint32, uint32>* mutable_unread_count() { return &unread_count_; }
+  inline std::map<uint32, uint32>* mutable_msg_count() { return &msg_count_; }
+
 private:
   uint32 user_id_;
   std::map<uint32, uint32> unread_count_;
@@ -39,27 +42,30 @@ class CounterManager {
 public:
   virtual ~CounterManager() {}
 
+  // 发了一条消息，同时新增发送和接收用户的消息计数器
+  virtual void IncrUserMsgCount(uint32 from_user_id, uint32 to_user_id) = 0;
+
   // 获得用户所有的未读消息
-  virtual bool GetUnreadMsgCount(uint32 user_id, Counter* unread_msg_count) = 0;
+  virtual const Counter* GetUnreadMsgCount(uint32 user_id, uint32 client_type, Counter* unread_msg_count) = 0;
 
   // 清除用户来自某好友的未读消息计数
-  virtual bool ClearUserUnreadItemCount(uint32 user_id, uint32 friend_user_id) = 0;
+  virtual bool ClearUserUnreadItemCount(uint32 user_id, uint32 friend_user_id, uint32 client_type) = 0;
 
   // 获得用户来自他的某好友的未读消息
-  virtual size_t GetUserFriendUnreadCount(uint32 user_id, uint32 friend_user_id) = 0;
+  virtual size_t GetUserFriendUnreadCount(uint32 user_id, uint32 friend_user_id, uint32 client_type) = 0;
 
   // 返回某用户在某个群里的未读消息计数
-  virtual size_t GetUserGroupUnreadCount(uint32 user_id, const std::vector<uint32>& group_ids, std::map<uint32, uint32>* unreads) = 0;
+  virtual size_t GetUserGroupUnreadCount(uint32 user_id, const std::vector<uint32>& group_ids, uint32 client_type, std::map<uint32, uint32>* unreads) = 0;
 
   // 根据用户ID和其对话的用户ID删除用户(前者)的所有已读对话消息,单向数据
-  virtual bool DeleteUserReadedDialogMessages(uint32 user_id, uint32 friend_user_id) = 0;
+  virtual bool DeleteUserReadedDialogMessages(uint32 user_id, uint32 friend_user_id, uint32 client_type) = 0;
 
   //////////////////////////////////////////////////////////////////////////
   // 返回某用户在某群里的未读消息数
-  virtual bool GetUserGroupCount(uint32 user_id, uint32 group_id, GroupCounterItem* item) = 0;
+  virtual const GroupCounterItem* GetUserGroupCount(uint32 user_id, uint32 group_id, uint32 client_type, GroupCounterItem* item) = 0;
 
   // 清除用户对应的某个群组的计数
-  virtual bool ClearUserGroupCounter(uint32 user_id, uint32 group_id) = 0;
+  virtual bool ClearUserGroupCounter(uint32 user_id, uint32 group_id, uint32 client_type) = 0;
 
 };
 

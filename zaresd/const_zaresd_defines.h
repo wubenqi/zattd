@@ -17,6 +17,7 @@ const int MESSAGE_TYPE_IM_GROUP = 17;
 const int MESSAGE_TYPE_IM_GROUP_AUDIO = 18;
 
 const uint32 UNREAD_MAX_COUNTER = 100; // 用户一次读取未读消息不能超过100
+const uint32 GROUP_UNREAD_MAX_COUNTER = 150; // 用户一次读取未读群消息不能超过200
 
 // ------------- 服务号小T ---------------
 // public static final int SYS_SERVER_USER_ID = 10000;
