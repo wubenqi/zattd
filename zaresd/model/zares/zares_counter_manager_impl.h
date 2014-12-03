@@ -90,9 +90,47 @@ struct GroupCounterInfo {
 
 typedef std::map<uint32, GroupCounterInfo> GroupCounterMap;
 
+typedef std::map<uint32, std::map<uint32, uint32> > CounterMap;
+
 class CacheManager {
 public:
   CacheManager() {}
+
+  //////////////////////////////////////////////////////////////////////////
+  void IncrUserMsgCount(uint32 from_user_id, uint32 to_user_id) {
+    base::AutoLock lock(lock_);
+    CounterMap::iterator it = counter_instance.find(from_user_id);
+    if (it==counter_instance.end()) {
+      std::map<uint32, uint32> to_user_ids;
+      to_user_ids[to_user_id] = 1;
+      counter_instance[from_user_id] = to_user_ids;
+    } else {
+      std::map<uint32, uint32>::iterator it2 = it->second.find(to_user_id);
+      if (it2 == it->second.end()) {
+        it->second[to_user_id] = 1;
+      } else {
+        it->second[to_user_id] += 1;
+      }
+    }
+  }
+
+  //////////////////////////////////////////////////////////////////////////
+  void IncreaseUserUnreadMsgCount(uint32 from_user_id, uint32 to_user_id) {
+    base::AutoLock lock(lock_);
+    UserUnreadCountMap::iterator it = unread_instance.find(from_user_id);
+    if (it!=unread_instance.end()) {
+      it->second.user_unread_count_ios[to_user_id] += 1;
+      it->second.user_unread_count_android[to_user_id] += 1;
+      it->second.user_unread_count_other[to_user_id] += 1;
+    } else {
+      UserUnreadCount user_unread_count;
+      user_unread_count.user_unread_count_ios[to_user_id] = 1;
+      user_unread_count.user_unread_count_android[to_user_id] = 1;
+      user_unread_count.user_unread_count_other[to_user_id] = 1;
+      unread_instance[from_user_id] = user_unread_count;
+    }
+
+  }
 
   std::map<uint32, uint32>* FindUnreadCount(uint32 user_id, uint32 client_type) {
     base::AutoLock lock(lock_);
@@ -102,6 +140,25 @@ public:
     } else {
       return NULL;
     }
+  }
+
+  //////////////////////////////////////////////////////////////////////////
+
+  bool IncrGroupMsgCount(uint32 group_id, uint32 last_message_id) {
+//     base::AutoLock lock(lock_);
+//     CacheManager cacheManager = CacheManager.getInstance();
+//     Jedis counterInstance = cacheManager
+//       .getResource(CachePoolName.group_counter);
+// 
+//     counterInstance.hincrBy(getGroupRedisKey(groupId),
+//       BizConstants.GROUP_COUNTER_SUBKEY_COUNTER, 1);
+//     counterInstance.hset(getGroupRedisKey(groupId),
+//       BizConstants.GROUP_COUNTER_SUBKEY_LASTID,
+//       String.valueOf(lastMessageId));
+// 
+//     cacheManager.returnResource(CachePoolName.group_counter,
+//       counterInstance);
+    return true;
   }
 
   uint32 GetGroupTotalCount(uint32 group_id) {
@@ -128,11 +185,11 @@ public:
     }
     return &(it2->second);
   }
-
   
+
 private:
   base::Lock lock_;
-  // std::map<uint32, UserUnreadCount> counter_instance;
+  CounterMap counter_instance;
   UserUnreadCountMap unread_instance;
   GroupCounterMap group_counter_instance;
 };
@@ -141,8 +198,6 @@ class ZAresCounterManagerImpl : public CounterManager {
 public:
   ZAresCounterManagerImpl() {}
   virtual ~ZAresCounterManagerImpl() {}
-
-  virtual void IncrUserMsgCount(uint32 from_user_id, uint32 to_user_id);
 
   // 获得用户所有的未读消息
   virtual const Counter* GetUnreadMsgCount(uint32 user_id, uint32 client_type, Counter* unread_msg_count);
@@ -165,6 +220,9 @@ public:
   // 清除用户对应的某个群组的计数
   virtual bool ClearUserGroupCounter(uint32 user_id, uint32 group_id, uint32 client_type);
 
+  //////////////////////////////////////////////////////////////////////////
+  void IncrUserMsgCount(uint32 from_user_id, uint32 to_user_id);
+  void IncreaseUserUnreadMsgCount(uint32 from_user_id, uint32 to_user_id);
 private:
   CacheManager cache_;
 };

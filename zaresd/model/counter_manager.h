@@ -43,7 +43,10 @@ public:
   virtual ~CounterManager() {}
 
   // 发了一条消息，同时新增发送和接收用户的消息计数器
-  virtual void IncrUserMsgCount(uint32 from_user_id, uint32 to_user_id) = 0;
+  // virtual void IncrUserMsgCount(uint32 from_user_id, uint32 to_user_id) = 0;
+
+  // 发了一条消息，同时新增发送和接收用户的消息计数器
+  // virtual void IncreaseUserUnreadMsgCount(uint32 from_user_id, uint32 to_user_id);
 
   // 获得用户所有的未读消息
   virtual const Counter* GetUnreadMsgCount(uint32 user_id, uint32 client_type, Counter* unread_msg_count) = 0;

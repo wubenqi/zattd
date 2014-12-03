@@ -17,6 +17,7 @@
 
 #include "zaresd/const_zaresd_defines.h"
 #include "zaresd/model/zares/zares_relationship_manager_impl.h"
+#include "zaresd/model/zares/zares_counter_manager_impl.h"
 
 namespace {
 
@@ -200,13 +201,23 @@ bool ZAresMessageManagerImpl::SendIMMessage(uint32 from_user_id, uint32 to_user_
   db::MakeQueryString("INSERT INTO IMMessage(`relateId`,`fromUserId`,`toUserId`,`content`,`type`,`created`,`updated`) VALUES(:1,:2,:3,:4,:5,:6,:7)", &p, &sql);
   db::ScopedPtr_DatabaseConnection db_conn(db_conn_pool_);
   
-  bool is_sucess =  (0 == db_conn->Execute(sql));
+  bool is_sucess =  db_conn->Execute(sql) > 0;
 
   if (is_sucess) {
     // 增加计数
-    // incrCounterForNewMessage(fromUserId, toUserId, succCount);
+    IncrCounterForNewMessage(from_user_id, to_user_id, 1);
     // writeNewMsgToCinfo(toUserId); // 加到用户消息中心里的未读聊天消息.
   }
 
   return is_sucess;
+}
+
+// 发送IM消息的增加计数
+void ZAresMessageManagerImpl::IncrCounterForNewMessage(uint32 from_user_id, uint32 to_user_id, uint32 count) {
+  counter_manager_->IncrUserMsgCount(from_user_id, to_user_id);
+  counter_manager_->IncreaseUserUnreadMsgCount(from_user_id, to_user_id);
+}
+
+void ZAresMessageManagerImpl::WriteNewMsgToCinfo(uint32 to_user_id) {
+  // counter_manager_->IncreaseChatNewCount(to_user_id);
 }

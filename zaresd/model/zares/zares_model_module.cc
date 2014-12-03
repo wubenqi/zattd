@@ -29,6 +29,7 @@ bool ZAresModelModule::Initialize(const std::string model_type) {
 
   ZAresRelationshipManagerImpl* relationship_manager = NULL;
   ZAresMessageManagerImpl* message_manager = NULL;
+  ZAresCounterManagerImpl* counter_manager = NULL;
 
   base::DBAddrInfo db_addr = config->db_addr();
   db_conn_pool_.Initialize(db_addr);
@@ -38,7 +39,8 @@ bool ZAresModelModule::Initialize(const std::string model_type) {
   }
 
   if (NULL == counter_manager_) {
-    counter_manager_ = new ZAresCounterManagerImpl();
+    counter_manager = new ZAresCounterManagerImpl();
+    counter_manager_ = counter_manager;
   }
 
   if (NULL == department_manager_) {
@@ -58,7 +60,8 @@ bool ZAresModelModule::Initialize(const std::string model_type) {
   }
 
   if (NULL == message_manager_) {
-    message_manager_ = message_manager = new ZAresMessageManagerImpl(&db_conn_pool_);
+    message_manager = new ZAresMessageManagerImpl(&db_conn_pool_);
+    message_manager_ = message_manager;
   }
 
   if (NULL == relationship_manager_) {
@@ -72,6 +75,8 @@ bool ZAresModelModule::Initialize(const std::string model_type) {
 
   // Setup manager's relation
   message_manager->SetRelationshipManager(relationship_manager);
+  message_manager->SetCounterManager(counter_manager);
+
   return true;
 }
 

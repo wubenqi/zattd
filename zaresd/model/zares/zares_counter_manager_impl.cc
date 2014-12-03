@@ -27,7 +27,19 @@
 
 
 void ZAresCounterManagerImpl::IncrUserMsgCount(uint32 from_user_id, uint32 to_user_id) {
+  if (from_user_id == 0 || to_user_id == 0) {
+    return;
+  }
 
+  cache_.IncrUserMsgCount(from_user_id, to_user_id);
+}
+
+void ZAresCounterManagerImpl::IncreaseUserUnreadMsgCount(uint32 from_user_id, uint32 to_user_id) {
+  if (from_user_id == 0 || to_user_id == 0) {
+    return;
+  }
+
+  cache_.IncreaseUserUnreadMsgCount(from_user_id, to_user_id);
 }
 
 const Counter* ZAresCounterManagerImpl::GetUnreadMsgCount(uint32 user_id, uint32 client_type, Counter* unread_msg_count) {

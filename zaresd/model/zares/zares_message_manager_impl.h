@@ -15,14 +15,18 @@ namespace db {
 }
 
 class ZAresRelationshipManagerImpl;
+class ZAresCounterManagerImpl;
+
 class ZAresMessageManagerImpl : public MessageManager {
 public:
   ZAresMessageManagerImpl(db::CdbConnPoolManager* db_conn_pool) :
     db_conn_pool_(db_conn_pool),
-    relationship_manager_(NULL) {}
+    relationship_manager_(NULL),
+    counter_manager_(NULL) {}
   virtual ~ZAresMessageManagerImpl() {}
 
   void SetRelationshipManager(ZAresRelationshipManagerImpl* relationship_manager) { relationship_manager_ = relationship_manager; }
+  void SetCounterManager(ZAresCounterManagerImpl* counter_manager) { counter_manager_ = counter_manager; }
 
   //////////////////////////////////////////////////////////////////////////
   // 获取单向数据，取未读消息用的,这里只取单向的，所以不用relateId
@@ -49,8 +53,13 @@ public:
   virtual bool SendIMMessage(uint32 from_user_id, uint32 to_user_id, uint32 type, const std::string& content, uint32 time);
 
 private:
+  void IncrCounterForNewMessage(uint32 from_user_id, uint32 to_user_id, uint32 count);
+  void WriteNewMsgToCinfo(uint32 to_user_id);
+
   db::CdbConnPoolManager* db_conn_pool_;
+
   ZAresRelationshipManagerImpl* relationship_manager_;
+  ZAresCounterManagerImpl* counter_manager_;
 };
 
 #endif
