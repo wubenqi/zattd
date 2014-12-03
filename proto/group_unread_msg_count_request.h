@@ -18,10 +18,11 @@ public:
   virtual ~GroupUnreadMsgCountRequest() {}
 
   PROPERTY_BASIC_TYPE_DECLARE(uint32, req_user_id);
+  PROPERTY_BASIC_TYPE_DECLARE(uint32, client_type);
 
   //////////////////////////////////////////////////////////////////////////
   virtual uint32 ByteSize() const {
-    return BaseTeamTalkPDU::ByteSize() + sizeof(req_user_id_);
+    return BaseTeamTalkPDU::ByteSize() + sizeof(req_user_id_) + sizeof(client_type_);
   }
 
 protected:
@@ -29,6 +30,7 @@ protected:
   virtual bool SerializeToByteStream(net::ByteStream* os) const;
 
   uint32 req_user_id_;
+  uint32 client_type_;
 };
 
 #endif // PROTO_UNREAD_MSG_COUNT_REQUEST_H_

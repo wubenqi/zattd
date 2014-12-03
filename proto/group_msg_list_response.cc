@@ -7,6 +7,39 @@
 
 #include "proto/group_msg_list_response.h"  
 
+namespace {
+
+uint32 ByteSize(const GroupMsg& group_msg) {
+  return sizeof(group_msg.from_user_id) +
+    sizeof(group_msg.create_time) +
+    SIZEOF_STRING(group_msg.msg_content);
+}
+
+bool ParseFromByteStream(GroupMsg* group_msg, const net::ByteStream& is) {
+  is >> group_msg->from_user_id
+    >> group_msg->create_time;
+  is.ReadString(group_msg->msg_content);
+
+  return !is.Fail();
+}
+
+bool SerializeToByteStream(const GroupMsg& group_msg, net::ByteStream* os) {
+  (*os) << group_msg.from_user_id
+    << group_msg.create_time;
+  os->WriteString(group_msg.msg_content);
+
+  return !os->Fail();
+}
+
+}
+
+uint32 GroupMsgListResponse::ByteSize() const {
+  uint32 size = BaseTeamTalkPDU::ByteSize();
+  size += sizeof(req_user_id_) + sizeof(request_cmd_id_) + sizeof(group_id_);
+  CalculateContainerByteSize2(size, msg_list_);
+  return size;
+}
+
 bool GroupMsgListResponse::ParseFromByteStream(const net::ByteStream& is) {
   is >> req_user_id_
     >> request_cmd_id_

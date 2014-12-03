@@ -7,6 +7,15 @@
 
 #include "proto/group_change_member_response.h"
 
+uint32 GroupChangeMemberResponse::ByteSize() const {
+  return BaseTeamTalkPDU::ByteSize() +
+    sizeof(req_user_id_) +
+    sizeof(result_) +
+    sizeof(group_id_) +
+    sizeof(change_type_) +
+    CalculateContainerByteSize(user_list_);
+}
+
 bool GroupChangeMemberResponse::ParseFromByteStream(const net::ByteStream& is) {
   is >> req_user_id_
     >> result_

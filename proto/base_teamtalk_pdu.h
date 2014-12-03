@@ -22,6 +22,15 @@
 #include "proto/const_message_pdu_types.h"
 #include "proto/attach_data.h"
 
+#include "proto/base_data.h"
+
+//////////////////////////////////////////////////////////////////////////
+// string序列化占用长度
+#define SIZEOF_STRING(s) (sizeof(uint32)+s.length())
+#define SIZEOF sizeof
+
+#if 0
+
 #define ZARESD_SERVER_LIB
 
 #ifdef ZARESD_SERVER_LIB
@@ -29,10 +38,6 @@ namespace db {
 class QueryAnswer;
 }
 #endif
-
-//////////////////////////////////////////////////////////////////////////
-// string序列化占用长度
-#define SIZEOF_STRING(s) (sizeof(uint32)+s.length())
 
 //////////////////////////////////////////////////////////////////////////
 struct UserInfo {
@@ -193,13 +198,9 @@ struct GroupUnreadMsgCount {
 };
 
 struct GroupMsg {
-  uint32 ByteSize() const { return 0; }
-  bool ParseFromByteStream(const net::ByteStream& is) { return true; }
-  bool SerializeToByteStream(net::ByteStream* os) const { return true; }
-
-#ifdef ZARESD_SERVER_LIB
-  bool ParseFromDatabase(const db::QueryAnswer& answ) { return true; }
-#endif
+  uint32 ByteSize() const;
+  bool ParseFromByteStream(const net::ByteStream& is);
+  bool SerializeToByteStream(net::ByteStream* os) const;
 
   uint32 from_user_id;
   uint32 create_time;
@@ -208,19 +209,16 @@ struct GroupMsg {
 
 //////////////////////////////////////////////////////////////////////////
 struct OfflineFile {
-  uint32 ByteSize() const { return 0; }
+  uint32 ByteSize() const { return sizeof(from_id) + SIZEOF_STRING(task_id) + SIZEOF_STRING(file_name) + sizeof(file_size); }
   bool ParseFromByteStream(const net::ByteStream& is) { return true; }
   bool SerializeToByteStream(net::ByteStream* os) const { return true; }
-
-#ifdef ZARESD_SERVER_LIB
-  bool ParseFromDatabase(const db::QueryAnswer& answ) { return true; }
-#endif
 
   uint32	from_id;
   std::string task_id;
   std::string file_name;
   uint32	file_size;
 };
+#endif
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -320,16 +318,24 @@ protected:
   inline std::vector<class_type>* mutable_##proterty() { return &proterty##_; }
 
 
-template <class T>
-uint32 CalculateContainerByteSize(const T& container) {
-  uint32 size = container.empty() ? 0 : sizeof(uint32);
-  for (typename T::const_iterator i(container.begin()); i != container.end(); ++i)
-    size += (*i)->ByteSize();
+#define CalculateContainerByteSize2(size, arr)  \
+  do { \
+    size += sizeof(uint32); \
+    for (size_t i=0; i<arr.size(); ++i) { \
+    size += ::ByteSize(*arr[i]); \
+    } \
+  } while (0);
 
-  return size;
-}
-
-template <>
+// template <class T>
+// uint32 CalculateContainerByteSize(const T& container) {
+//   uint32 size = sizeof(uint32);
+//   for (typename T::const_iterator i(container.begin()); i != container.end(); ++i)
+//     size += ::ByteSize( *(*i));//->ByteSize();
+// 
+//   return size;
+// }
+// 
+// template <>
 uint32 CalculateContainerByteSize(const std::vector<uint32>& container);
 
 //////////////////////////////////////////////////////////////////////////
@@ -339,7 +345,7 @@ uint32 CalculateContainerByteSize(const std::vector<uint32>& container);
     is >> array_size; \
     for (uint32 i=0; i<array_size; ++i) { \
       class_name* obj = new class_name(); \
-      obj->ParseFromByteStream(is); \
+      ::ParseFromByteStream(obj, is); \
       arr.push_back(obj); \
     } \
   } while (0);
@@ -348,7 +354,7 @@ uint32 CalculateContainerByteSize(const std::vector<uint32>& container);
   do { \
     (*os) << static_cast<uint32>(arr.size()); \
     for (size_t i=0; i<arr.size(); ++i) { \
-      arr[i]->SerializeToByteStream(os); \
+    ::SerializeToByteStream(*arr[i], os); \
     } \
   } while (0);
 

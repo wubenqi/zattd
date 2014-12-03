@@ -5,8 +5,8 @@
 // By: wubenqi<wubenqi@gmail.com>
 //
 
-#ifndef PROTO_UNREAD_MSG_COUNT_RESPONSE_H_
-#define PROTO_UNREAD_MSG_COUNT_RESPONSE_H_
+#ifndef PROTO_GROUP_UNREAD_MSG_COUNT_RESPONSE_H_
+#define PROTO_GROUP_UNREAD_MSG_COUNT_RESPONSE_H_
 
 #include "proto/base_teamtalk_pdu.h"
 
@@ -23,9 +23,7 @@ public:
   PROPERTY_OBJECTPTR_ARRAY_DECLARE(GroupUnreadMsgCount, group_unread_list);
 
   //////////////////////////////////////////////////////////////////////////
-  virtual uint32 ByteSize() const {
-    return BaseTeamTalkPDU::ByteSize() + sizeof(req_user_id_) + CalculateContainerByteSize(group_unread_list_);
-  }
+  virtual uint32 ByteSize() const;
 
 protected:
   virtual bool ParseFromByteStream(const net::ByteStream& is);
@@ -35,4 +33,4 @@ protected:
   std::vector<GroupUnreadMsgCount*> group_unread_list_;
 };
 
-#endif // PROTO_UNREAD_MSG_COUNT_RESPONSE_H_
+#endif // PROTO_GROUP_UNREAD_MSG_COUNT_RESPONSE_H_

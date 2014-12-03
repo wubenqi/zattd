@@ -7,6 +7,52 @@
 
 #include "proto/msg_list_response.h"  
 
+namespace {
+
+uint32 ByteSize(const ServerMsg& server_msg) {
+  return sizeof(server_msg.from_user_id) +
+    SIZEOF_STRING(server_msg.from_name) +
+    SIZEOF_STRING(server_msg.from_nick_name) +
+    SIZEOF_STRING(server_msg.from_avatar_url) +
+    sizeof(server_msg.create_time) +
+    sizeof(server_msg.msg_type) +
+    SIZEOF_STRING(server_msg.msg_data);
+}
+
+bool ParseFromByteStream(ServerMsg* server_msg, const net::ByteStream& is) {
+  is >> server_msg->from_user_id;
+  is.ReadString(server_msg->from_name);
+  is.ReadString(server_msg->from_nick_name);
+  is.ReadString(server_msg->from_avatar_url);
+  is >> server_msg->create_time
+    >> server_msg->msg_type;
+  is.ReadString(server_msg->msg_data);
+
+  return !is.Fail();
+}
+
+bool SerializeToByteStream(const ServerMsg& server_msg, net::ByteStream* os) {
+  (*os) << server_msg.from_user_id;
+  os->WriteString(server_msg.from_name);
+  os->WriteString(server_msg.from_nick_name);
+  os->WriteString(server_msg.from_avatar_url);
+  (*os) << server_msg.create_time
+    << server_msg.msg_type;
+  os->WriteString(server_msg.msg_data);
+
+  return !os->Fail();
+}
+
+}
+
+uint32 MsgListResponse::ByteSize() const {
+  uint32 size = BaseTeamTalkPDU::ByteSize();
+  size += sizeof(request_cmd_id_) + sizeof(from_user_id_) + sizeof(to_user_id_);
+  CalculateContainerByteSize2(size, msg_list_);
+  return size;
+}
+
+
 bool MsgListResponse::ParseFromByteStream(const net::ByteStream& is) {
   is >> request_cmd_id_
     >> from_user_id_

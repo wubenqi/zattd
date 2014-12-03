@@ -13,6 +13,35 @@
 
 #include "proto/base_teamtalk_pdu.h"
 
+namespace {
+
+// SELECT id,title,leader,pid,status,desc FROM imdepartment WHERE status = 0
+bool ParseFromDatabase(DepartmentInfo* department_info, const db::QueryAnswer& answ) {
+  enum {
+    kColumn_ID = 0,
+    kColumn_Title,
+    kColumn_Leader,
+    kColumn_PID,
+    kColumn_Status,
+    kColumn_Desc,
+  };
+
+  bool result  = true;
+  do {
+    DB_GET_RETURN_COLUMN(kColumn_ID, department_info->depart_id);
+    DB_GET_RETURN_COLUMN(kColumn_Title, department_info->title);
+    DB_GET_RETURN_COLUMN(kColumn_Leader, department_info->leader);
+    DB_GET_RETURN_COLUMN(kColumn_PID, department_info->parent_depart_id);
+    DB_GET_RETURN_COLUMN(kColumn_Status, department_info->status);
+    DB_GET_RETURN_COLUMN(kColumn_Desc, department_info->description);
+  } while (0);
+
+  return result;
+}
+
+}
+
+
 // 获取所有部门信息
 bool ZAresDepartmentManagerImpl::GetDepartmentInfos(std::vector<DepartmentInfo*>* department_infos) {
  
@@ -22,7 +51,7 @@ bool ZAresDepartmentManagerImpl::GetDepartmentInfos(std::vector<DepartmentInfo*>
   if (answ.get() != NULL) {
    while (answ->FetchRow()) {
       DepartmentInfo* department = new DepartmentInfo();
-      department->ParseFromDatabase(*answ);
+      ::ParseFromDatabase(department, *answ);
       department_infos->push_back(department);
     }
   } else {

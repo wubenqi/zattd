@@ -18,6 +18,36 @@
 #include "zaresd/const_zaresd_defines.h"
 #include "zaresd/model/zares/zares_relationship_manager_impl.h"
 
+namespace {
+
+bool ParseFromDatabase(ServerMsg* server_msg, const db::QueryAnswer& answ) {
+  // "SELECT id,relateId,type,content,status,created,updated FROM IMMessage WHERE "
+  //  "relateId=%d AND fromUserId = %d AND toUserId = %d AND status = 0 ORDER BY created DESC, id DESC LIMIT %d, %d",
+
+  enum {
+    kColumn_ID = 0,
+    kColumn_RelateId,
+    kColumn_Type,
+    kColumn_Content,
+    kColumn_Status,
+    kColumn_Created,
+    kColumn_Updated,
+  };
+
+  bool result  = true;
+  do {
+    uint32 msg_type;
+    DB_GET_RETURN_COLUMN(kColumn_Type, msg_type);
+    server_msg->msg_type = static_cast<uint8>(msg_type);
+    DB_GET_RETURN_COLUMN(kColumn_Created, server_msg->create_time);
+    DB_GET_RETURN_COLUMN(kColumn_Content, server_msg->msg_data);
+  } while (0);
+
+  return result;
+}
+
+}
+
 size_t ZAresMessageManagerImpl::GetMessages(uint32 from_user_id, uint32 to_user_id, uint32 offset, int count, std::vector<ServerMsg*>* messages) {
 
 //  List<Message> messageList = new ArrayList<Message>();
@@ -38,7 +68,8 @@ size_t ZAresMessageManagerImpl::GetMessages(uint32 from_user_id, uint32 to_user_
   if (answ.get() != NULL) {
     while (answ->FetchRow()) {
       ServerMsg* server_msg = new ServerMsg();
-      server_msg->ParseFromDatabase(*answ);
+      server_msg->from_user_id = from_user_id;
+      ::ParseFromDatabase(server_msg, *answ);
     }
   }
 

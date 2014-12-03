@@ -26,6 +26,31 @@ struct UserStatus {
   uint32 user_id;
 };
 
+bool ParseFromDatabase(GroupInfo* group_info, const db::QueryAnswer& answ) {
+  // "SELECT groupId,groupName,avatar,createUserId,groupType,updated FROM IMGroup WHERE groupId IN "
+  //   "(SELECT groupId FROM IMGroupRelation WHERE userId=%d AND status>=1 %s ORDER BY created DESC, id DESC LIMIT %d)",
+  enum {
+    kColumn_GroupID = 0,
+    kColumn_GroupName,
+    kColumn_Avatar,
+    kColumn_CreateUserID,
+    kColumn_GroupType,
+    kColumn_Updated,
+  };
+
+  bool result  = true;
+  do {
+    DB_GET_RETURN_COLUMN(kColumn_GroupID, group_info->group_id);
+    DB_GET_RETURN_COLUMN(kColumn_GroupName, group_info->group_name);
+    DB_GET_RETURN_COLUMN(kColumn_Avatar, group_info->group_avatar);
+    DB_GET_RETURN_COLUMN(kColumn_CreateUserID, group_info->group_creator_id);
+    DB_GET_RETURN_COLUMN(kColumn_GroupType, group_info->group_type);
+    DB_GET_RETURN_COLUMN(kColumn_Updated, group_info->group_updated);
+  } while (0);
+
+  return result;
+}
+
 }
 
 size_t ZAresGroupManagerImpl::GetGroupsByUserId(uint32 user_id, bool is_fixed_group, std::vector<GroupInfo*>* groups) {
@@ -48,7 +73,7 @@ size_t ZAresGroupManagerImpl::GetGroupsByUserId(uint32 user_id, bool is_fixed_gr
   if (answ.get()) {
     while(answ->FetchRow()) {
       GroupInfo* group = new GroupInfo();
-      group->ParseFromDatabase(*answ);
+      ::ParseFromDatabase(group, *answ);
       groups->push_back(group);
     }
   } else {
@@ -163,7 +188,7 @@ const GroupInfo* ZAresGroupManagerImpl::GetGroupInfo(uint32 group_id, GroupInfo*
 
   if (answ.get()) {
     if(answ->FetchRow()) {
-      group->ParseFromDatabase(*answ);
+      ::ParseFromDatabase(group, *answ);
       return group;
     }
   } else {
@@ -191,7 +216,7 @@ size_t ZAresGroupManagerImpl::GetRecentGroupsByUserId(uint32 user_id, std::vecto
   if (answ.get()) {
     while(answ->FetchRow()) {
       GroupInfo* group = new GroupInfo();
-      group->ParseFromDatabase(*answ);
+      ::ParseFromDatabase(group, *answ);
       groups->push_back(group);
     }
   } else {

@@ -7,6 +7,18 @@
 
 #include "proto/group_user_list_response.h"
 
+uint32 GroupUserListResponse::ByteSize() const {
+  return BaseTeamTalkPDU::ByteSize() +
+    sizeof(req_user_id_) +
+    sizeof(group_id_) +
+    sizeof(result_) +
+    SIZEOF_STRING(group_name_) +
+    SIZEOF_STRING(group_avatar_) +
+    sizeof(group_creator_id_) +
+    sizeof(group_type_) +
+    CalculateContainerByteSize(user_list_);
+}
+
 bool GroupUserListResponse::ParseFromByteStream(const net::ByteStream& is) {
   is >> req_user_id_
     >> group_id_

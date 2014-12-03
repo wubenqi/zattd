@@ -38,6 +38,23 @@ uint32 ByteSize(const UserInfo& user_info) {
     SIZEOF_STRING(user_info.email);
 }
 
+bool ParseFromByteStream(UserInfo* user_info, const net::ByteStream& is) {
+  is >> user_info->user_id;
+  is.ReadString(user_info->name);
+  is.ReadString(user_info->nick_name);
+  is.ReadString(user_info->avatar_url);
+  is.ReadString(user_info->title);
+  is.ReadString(user_info->position);
+  is >> user_info->role_status
+    >> user_info->sex
+    >> user_info->depart_id
+    >> user_info->job_num;
+  is.ReadString(user_info->telphone);
+  is.ReadString(user_info->email);
+
+  return !is.Fail();
+}
+
 bool SerializeToByteStream(const UserInfo& user_info,  net::ByteStream* os) {
   (*os) << user_info.user_id;
   os->WriteString(user_info.name);
@@ -60,13 +77,8 @@ bool SerializeToByteStream(const UserInfo& user_info,  net::ByteStream* os) {
 uint32 UsersInfoResponse::ByteSize() const {
   uint32 size = BaseTeamTalkPDU::ByteSize();
   size += sizeof(from_user_id_);
-  uint32 users_size = user_info_list_.size();
-  size += sizeof(users_size);
-  for (size_t i=0; i<users_size; ++i) {
-    size += ::ByteSize(*user_info_list_[i]);
-  }
+  CalculateContainerByteSize2(size, user_info_list_);
   return size;
-  // return BaseTeamTalkPDU::ByteSize() + sizeof(from_user_id_) + CalculateContainerByteSize(user_info_list_);
 }
 
 
@@ -79,16 +91,8 @@ bool UsersInfoResponse::ParseFromByteStream(const net::ByteStream& is) {
 }
 
 bool UsersInfoResponse::SerializeToByteStream(net::ByteStream* os) const {
-//   (*os) << from_user_id_;
-//   SERIALIZE_OBJECTPTR_ARRAY_IMPLICIT(user_info_list_);
-
-  uint32 users_size = user_info_list_.size();
-  (*os) << from_user_id_
-    << users_size;
-
-  for (size_t i=0; i<users_size; ++i){
-    ::SerializeToByteStream(*user_info_list_[i], os);
-  }
+  (*os) << from_user_id_;
+  SERIALIZE_OBJECTPTR_ARRAY_IMPLICIT(user_info_list_);
 
   return !os->Fail();
 }

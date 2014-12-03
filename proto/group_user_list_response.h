@@ -27,17 +27,7 @@ public:
   PROPERTY_BASIC_TYPE_ARRAY_DECLARE(uint32, user_list);
 
   //////////////////////////////////////////////////////////////////////////
-  virtual uint32 ByteSize() const {
-    return BaseTeamTalkPDU::ByteSize() +
-      sizeof(req_user_id_) +
-      sizeof(group_id_) +
-      sizeof(result_) +
-      SIZEOF_STRING(group_name_) +
-      SIZEOF_STRING(group_avatar_) +
-      sizeof(group_creator_id_) +
-      sizeof(group_type_) +
-      CalculateContainerByteSize(user_list_);
-  }
+  virtual uint32 ByteSize() const;
 
 protected:
   virtual bool ParseFromByteStream(const net::ByteStream& is);

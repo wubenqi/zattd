@@ -7,6 +7,15 @@
 
 #include "proto/group_create_tmp_group_response.h"
 
+uint32 GroupCreateTmpGroupResponse::ByteSize() const {
+  return BaseTeamTalkPDU::ByteSize() +
+    sizeof(req_user_id_) +
+    sizeof(result_) +
+    sizeof(group_id_) +
+    SIZEOF_STRING(group_name_) +
+    CalculateContainerByteSize(user_list_);
+}
+
 bool GroupCreateTmpGroupResponse::ParseFromByteStream(const net::ByteStream& is) {
   is >> req_user_id_
     >> result_

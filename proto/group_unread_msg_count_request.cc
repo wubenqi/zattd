@@ -8,13 +8,15 @@
 #include "proto/group_unread_msg_count_request.h"
 
 bool GroupUnreadMsgCountRequest::ParseFromByteStream(const net::ByteStream& is) {
-  is >> req_user_id_;
+  is >> req_user_id_
+    >> client_type_;
 
   return !is.Fail();
 }
 
 bool GroupUnreadMsgCountRequest::SerializeToByteStream(net::ByteStream* os) const {
-  (*os) << req_user_id_;
+  (*os) << req_user_id_
+    << client_type_;
 
   return !os->Fail();
 }

@@ -21,9 +21,7 @@ public:
   PROPERTY_OBJECTPTR_ARRAY_DECLARE(OfflineFile, file_list);
 
   //////////////////////////////////////////////////////////////////////////
-  virtual uint32 ByteSize() const {
-    return BaseTeamTalkPDU::ByteSize() + sizeof(req_user_id_) + CalculateContainerByteSize(file_list_);
-  }
+  virtual uint32 ByteSize() const;
 
 protected:
   virtual bool ParseFromByteStream(const net::ByteStream& is);

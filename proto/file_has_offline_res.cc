@@ -7,6 +7,43 @@
 
 #include "proto/file_has_offline_res.h"
 
+namespace {
+
+uint32 ByteSize(const OfflineFile& offline_file) {
+  return sizeof(offline_file.from_id) +
+    SIZEOF_STRING(offline_file.task_id) +
+    SIZEOF_STRING(offline_file.file_name) +
+    sizeof(offline_file.file_size);
+}
+
+bool ParseFromByteStream(OfflineFile* offline_file, const net::ByteStream& is) {
+  is >> offline_file->from_id;
+  is.ReadString(offline_file->task_id);
+  is.ReadString(offline_file->file_name);
+  is >> offline_file->file_size;
+
+  return !is.Fail();
+}
+
+bool SerializeToByteStream(const OfflineFile& offline_file, net::ByteStream* os) {
+  (*os) << offline_file.from_id;
+  os->WriteString(offline_file.task_id);
+  os->WriteString(offline_file.file_name);
+  (*os) << offline_file.file_size;
+
+  return !os->Fail();
+}
+
+}
+
+uint32 FileHasOfflineRes::ByteSize() const {
+  uint32 size = BaseTeamTalkPDU::ByteSize();
+  size += sizeof(req_user_id_);
+  CalculateContainerByteSize2(size, file_list_);
+  return size;
+}
+
+
 bool FileHasOfflineRes::ParseFromByteStream(const net::ByteStream& is) {
   is >> req_user_id_;
 

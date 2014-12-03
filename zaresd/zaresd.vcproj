@@ -608,6 +608,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\proto\base_data.h"
+				>
+			</File>
+			<File
 				RelativePath="..\proto\base_teamtalk_pdu.cc"
 				>
 			</File>

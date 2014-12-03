@@ -9,6 +9,7 @@
 
 #include "base/logging.h"
 
+#if 0
 #ifdef ZARESD_SERVER_LIB
 #include "db/base_database.h"
 #endif
@@ -280,6 +281,29 @@ bool GroupInfo::ParseFromDatabase(const db::QueryAnswer& answ) {
 #endif
 
 //////////////////////////////////////////////////////////////////////////
+uint32 OfflineFile::ByteSize() const {
+  return sizeof(from_id) + SIZEOF_STRING(task_id) + SIZEOF_STRING(file_name) + sizeof(file_size);
+}
+
+bool OfflineFile::ParseFromByteStream(const net::ByteStream& is) {
+  is >> from_id;
+  is.ReadString(task_id);
+  is.ReadString(file_name);
+  is >> file_size;
+
+  return !is.Fail();
+}
+bool OfflineFile::SerializeToByteStream(net::ByteStream* os) const {
+  (*os) << from_id;
+  os->WriteString(task_id);
+  os->WriteString(file_name);
+  (*os) << file_size;
+
+  return !os->Fail();
+}
+#endif
+
+//////////////////////////////////////////////////////////////////////////
 bool BaseTeamTalkPDU::ParseFromArray(const void* data, uint32 data_len) {
   net::ByteStream is(data, data_len);
   bool result = ParseFromByteStream(is);
@@ -352,8 +376,8 @@ std::string* BaseTeamTalkPDU::MutableAttachData() {
   }
 }
 
-template <>
+// template <>
 uint32 CalculateContainerByteSize(const std::vector<uint32>& container) {
-  return container.empty() ? 0 : sizeof(uint32)+container.size()*sizeof(uint32);
+  return sizeof(uint32) + (container.empty() ? 0 : container.size())*sizeof(uint32);
 }
 

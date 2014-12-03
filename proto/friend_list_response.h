@@ -23,9 +23,7 @@ public:
    PROPERTY_OBJECTPTR_ARRAY_DECLARE(FriendInfo, friend_lists);
 // 
   //////////////////////////////////////////////////////////////////////////
-  virtual uint32 ByteSize() const {
-    return BaseTeamTalkPDU::ByteSize() + sizeof(from_user_id_) + CalculateContainerByteSize(friend_lists_);;
-  }
+  virtual uint32 ByteSize() const;
 
 protected:
   virtual bool ParseFromByteStream(const net::ByteStream& is);

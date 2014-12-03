@@ -23,9 +23,7 @@ public:
    PROPERTY_OBJECTPTR_ARRAY_DECLARE(DepartmentInfo, depart_list);
 // 
   //////////////////////////////////////////////////////////////////////////
-  virtual uint32 ByteSize() const {
-    return BaseTeamTalkPDU::ByteSize() + sizeof(req_user_id_) + CalculateContainerByteSize(depart_list_);
-  }
+  virtual uint32 ByteSize() const;
 
 protected:
   virtual bool ParseFromByteStream(const net::ByteStream& is);

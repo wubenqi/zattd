@@ -7,6 +7,48 @@
 
 #include "proto/department_response.h"
 
+namespace {
+
+uint32 ByteSize(const DepartmentInfo& department_info) {
+  return sizeof(department_info.depart_id) +
+    SIZEOF_STRING(department_info.title) + 
+    SIZEOF_STRING(department_info.description) +
+    sizeof(department_info.parent_depart_id) +
+    sizeof(department_info.leader) +
+    sizeof(department_info.status);
+}
+
+bool ParseFromByteStream(DepartmentInfo* department_info, const net::ByteStream& is) {
+  is >> department_info->depart_id;
+  is.ReadString(department_info->title);
+  is.ReadString(department_info->description);
+  is >> department_info->parent_depart_id
+    >> department_info->leader
+    >> department_info->status;
+
+  return !is.Fail();
+}
+
+bool SerializeToByteStream(const DepartmentInfo& department_info, net::ByteStream* os) {
+  (*os) << department_info.depart_id;
+  os->WriteString(department_info.title);
+  os->WriteString(department_info.description);
+  (*os) << department_info.parent_depart_id
+    << department_info.leader
+    << department_info.status;
+
+  return !os->Fail();
+}
+
+}
+
+uint32 DepartmentResponse::ByteSize() const {
+  uint32 size = BaseTeamTalkPDU::ByteSize();
+  size += sizeof(req_user_id_);
+  CalculateContainerByteSize2(size, depart_list_);
+  return size;
+}
+
 bool DepartmentResponse::ParseFromByteStream(const net::ByteStream& is) {
   is >> req_user_id_;
 

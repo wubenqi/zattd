@@ -18,6 +18,29 @@
 
 #include "zaresd/const_zaresd_defines.h"
 
+namespace {
+
+// .1..4
+// "SELECT relateid,frienduserid,status,created,updated FROM imrecentcontact WHERE userid = %d AND status = 0 ORDER BY updated desc, relateId DESC LIMIT 100";
+bool ParseFromDatabase(FriendInfo* friend_info, const db::QueryAnswer& answ) {
+  enum {
+    kColumn_RelateID = 0,
+    kColumn_FriendUserID,
+    kColumn_Status,
+    kColumn_Created,
+    kColumn_Updated,
+  };
+
+  bool result  = true;
+  do {
+    DB_GET_RETURN_COLUMN(kColumn_FriendUserID, friend_info->friend_user_id);
+    DB_GET_RETURN_COLUMN(kColumn_Updated, friend_info->updated);
+  } while (0);
+
+  return result;
+}
+
+}
 bool ZAresRelationshipManagerImpl::GetRecentContactByUserId(uint32 user_id, int limit, std::vector<FriendInfo*>* friends) {
   if (friends == NULL || user_id == 0) {
     LOG(ERROR) << "friends is NULL or user_id is 0!!!!";
@@ -34,10 +57,10 @@ bool ZAresRelationshipManagerImpl::GetRecentContactByUserId(uint32 user_id, int 
   scoped_ptr<db::QueryAnswer> answ(db_conn->Query(sql));
   if (answ.get() != NULL) {
     while (answ->FetchRow()) {
-      FriendInfo* user = new FriendInfo();
-      CHECK(user);
-      user->ParseFromDatabase(*answ);
-      friends->push_back(user);
+      FriendInfo* friend_info = new FriendInfo();
+      CHECK(friend_info);
+      ParseFromDatabase(friend_info, *answ);
+      friends->push_back(friend_info);
     }
   } else {
     return false;
