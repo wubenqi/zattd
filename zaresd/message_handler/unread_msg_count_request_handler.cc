@@ -31,7 +31,7 @@ int UnreadMsgCountRequestHandler::Execute(ZAresHandlerThread* context, uint64 se
   unread_msg_count_response.SetAttachData(*unread_msg_count_request->GetAttachData());
 
   Counter user_unread_count;
-  counter_manager->GetUnreadMsgCount(unread_msg_count_request->user_id(), &user_unread_count);
+  counter_manager->GetUnreadMsgCount(unread_msg_count_request->user_id(), unread_msg_count_request->client_type(), &user_unread_count);
 
   const std::map<uint32, uint32>& unread_count = user_unread_count.unread_count();
 

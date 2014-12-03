@@ -20,11 +20,12 @@ public:
   PROPERTY_BASIC_TYPE_DECLARE(uint32, request_id);
   PROPERTY_BASIC_TYPE_DECLARE(uint32, from_user_id);
   PROPERTY_BASIC_TYPE_DECLARE(uint32, to_user_id);
-  
+  PROPERTY_BASIC_TYPE_DECLARE(uint32, client_type);
+ 
   //////////////////////////////////////////////////////////////////////////
   virtual uint32 ByteSize() const {
     return BaseTeamTalkPDU::ByteSize() +
-      sizeof(request_id_) + sizeof(from_user_id_) + sizeof(to_user_id_);
+      sizeof(request_id_) + sizeof(from_user_id_) + sizeof(to_user_id_) + sizeof(client_type_);
   }
 
 protected:
@@ -34,6 +35,7 @@ protected:
   uint32 request_id_;
   uint32 from_user_id_;
   uint32 to_user_id_;
+  uint32 client_type_;
 };
 
 

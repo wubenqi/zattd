@@ -40,12 +40,12 @@ int MsgReadAckHandler::Execute(ZAresHandlerThread* context, uint64 session_id, c
   db_write_response.set_from_id(msg_read_ack->from_user_id());
   db_write_response.set_to_id(msg_read_ack->to_user_id());
 
-  if (!counter_manager->ClearUserUnreadItemCount(msg_read_ack->from_user_id(), msg_read_ack->to_user_id())) {
+  if (!counter_manager->ClearUserUnreadItemCount(msg_read_ack->from_user_id(), msg_read_ack->to_user_id(), msg_read_ack->client_type())) {
     // todo:
     //  LOG(ERROR) << "";
     db_write_response.set_result(1);
   }
-  counter_manager->DeleteUserReadedDialogMessages(msg_read_ack->from_user_id(), msg_read_ack->to_user_id());
+  counter_manager->DeleteUserReadedDialogMessages(msg_read_ack->from_user_id(), msg_read_ack->to_user_id(), msg_read_ack->client_type());
 
   context->SendSessionData(session_id, db_write_response);
 

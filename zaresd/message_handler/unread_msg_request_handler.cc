@@ -33,7 +33,7 @@ int UnreadMsgRequestHandler::Execute(ZAresHandlerThread* context, uint64 session
   msg_list_response.set_to_user_id(unread_msg_request->to_user_id());
   msg_list_response.SetAttachData(*unread_msg_request->GetAttachData());
 
-  uint32 count = counter_mananger->GetUserFriendUnreadCount(unread_msg_request->from_user_id(), unread_msg_request->to_user_id());
+  uint32 count = counter_mananger->GetUserFriendUnreadCount(unread_msg_request->from_user_id(), unread_msg_request->to_user_id(), unread_msg_request->client_type());
   count = count > UNREAD_MAX_COUNTER ? UNREAD_MAX_COUNTER : count;
   if (count > 0) {
     message_mananger->GetMessages(

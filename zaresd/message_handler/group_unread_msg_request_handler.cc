@@ -34,6 +34,7 @@ int GroupUnreadMsgRequestHandler::Execute(ZAresHandlerThread* context, uint64 se
   counter_manager->GetUserGroupCount(
       group_unread_msg_request->req_user_id(),
       group_unread_msg_request->group_id(),
+      group_unread_msg_request->client_type(),
       &group_counter_item);
 
   message_manager->GetGroupMessagesFromId(

@@ -33,7 +33,7 @@ int GroupUnreadMsgCountRequestHandler::Execute(ZAresHandlerThread* context, uint
   std::map<uint32, uint32> unreads;
 
   group_manger->GetGroupIdsByUserId(group_unread_msg_count_request->req_user_id(),  false, &group_ids);
-  counter_manger->GetUserGroupUnreadCount(group_unread_msg_count_request->req_user_id(), group_ids, &unreads);
+  counter_manger->GetUserGroupUnreadCount(group_unread_msg_count_request->req_user_id(), group_ids, group_unread_msg_count_request->client_type(), &unreads);
 
   for (std::map<uint32, uint32>::iterator it=unreads.begin(); it!=unreads.end(); ++it) {
     GroupUnreadMsgCount* unread = group_unread_msg_count_response.add_group_unread_list();

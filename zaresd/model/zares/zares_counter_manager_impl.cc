@@ -26,6 +26,10 @@
 // CacheManager cache_manager_;
 
 
+void ZAresCounterManagerImpl::IncrUserMsgCount(uint32 from_user_id, uint32 to_user_id) {
+
+}
+
 const Counter* ZAresCounterManagerImpl::GetUnreadMsgCount(uint32 user_id, uint32 client_type, Counter* unread_msg_count) {
   if (user_id == 0) {
     return NULL;
@@ -131,7 +135,9 @@ const GroupCounterItem* ZAresCounterManagerImpl::GetUserGroupCount(uint32 user_i
 
 bool ZAresCounterManagerImpl::ClearUserGroupCounter(uint32 user_id, uint32 group_id, uint32 client_type) {
   ReadCountAndLastID* counter_and_last_id = cache_.FindCounterAndLastIDs(user_id, group_id, client_type);
-  counter_and_last_id->last_id = 0;
-  counter_and_last_id->read_count = 0;
+  if (counter_and_last_id) {
+    counter_and_last_id->last_id = 0;
+    counter_and_last_id->read_count = 0;
+  }
   return true;
 }

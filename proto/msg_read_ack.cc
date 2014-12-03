@@ -10,7 +10,8 @@
 bool MsgReadAck::ParseFromByteStream(const net::ByteStream& is) {
   is >> request_id_
     >> from_user_id_
-    >> to_user_id_;
+    >> to_user_id_
+    >> client_type_;
 
   return !is.Fail();
 }
@@ -18,7 +19,8 @@ bool MsgReadAck::ParseFromByteStream(const net::ByteStream& is) {
 bool MsgReadAck::SerializeToByteStream(net::ByteStream* os) const {
   (*os) << request_id_
     << from_user_id_
-    << to_user_id_;
+    << to_user_id_
+    << client_type_;
 
   return !os->Fail();
 }

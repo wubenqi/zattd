@@ -27,7 +27,7 @@ int GroupMsgReadAckHandler::Execute(ZAresHandlerThread* context, uint64 session_
   CounterManager* counter_manager = ModelMainManager::GetInstance()->GetCounterManager();
 
   uint32 result = 0;
-  if (!counter_manager->ClearUserGroupCounter(group_msg_read_ack->req_user_id(), group_msg_read_ack->group_id())) {
+  if (!counter_manager->ClearUserGroupCounter(group_msg_read_ack->req_user_id(), group_msg_read_ack->group_id(), group_msg_read_ack->client_type())) {
     result = 1;
   }
 

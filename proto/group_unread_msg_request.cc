@@ -9,14 +9,16 @@
 
 bool GroupUnreadMsgRequest::ParseFromByteStream(const net::ByteStream& is) {
   is >> req_user_id_
-    >> group_id_;
+    >> group_id_
+    >> client_type_;
 
   return !is.Fail();
 }
 
 bool GroupUnreadMsgRequest::SerializeToByteStream(net::ByteStream* os) const {
   (*os) << req_user_id_
-    << group_id_;
+    << group_id_
+    << client_type_;
 
   return !os->Fail();
 }

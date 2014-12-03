@@ -142,6 +142,8 @@ public:
   ZAresCounterManagerImpl() {}
   virtual ~ZAresCounterManagerImpl() {}
 
+  virtual void IncrUserMsgCount(uint32 from_user_id, uint32 to_user_id);
+
   // 获得用户所有的未读消息
   virtual const Counter* GetUnreadMsgCount(uint32 user_id, uint32 client_type, Counter* unread_msg_count);
 
