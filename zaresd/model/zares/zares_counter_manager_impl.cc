@@ -84,7 +84,7 @@ size_t ZAresCounterManagerImpl::GetUserFriendUnreadCount(uint32 user_id, uint32 
   size_t unread_count = 0;
   if (user_id != 0 && friend_user_id != 0) {
     std::map<uint32, uint32>* unread_counts = cache_.FindUnreadCount(user_id, client_type);
-    if (unread_count == NULL) {
+    if (unread_counts == NULL) {
       return false;
     }
 

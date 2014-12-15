@@ -278,15 +278,15 @@ protected:
 // 定义成员宏
 // 普通对象，例如string等不需要自己管理内存的对象
 #define PROPERTY_OBJECT_DECLARE(class_name, proterty) \
-  inline const class_name##& proterty() const { return proterty##_; } \
-  inline void set_##proterty(const class_name##& val) { proterty##_ = val; } \
-  inline class_name##* mutable_##proterty() { return &proterty##_; }
+  inline const class_name & proterty() const { return proterty##_; } \
+  inline void set_##proterty(const class_name & val) { proterty##_ = val; } \
+  inline class_name * mutable_##proterty() { return &proterty##_; }
 
 // 自定义对象，存储的是对象指针，分配和释放需要自己管理
 #define PROPERTY_OBJECTPTR_DECLARE(class_name, proterty) \
-  inline const class_name##& proterty() const { return *proterty##_; } \
-  inline void set_##proterty(const class_name##& val) { *(mutable_##proterty()) = val; } \
-  inline class_name##* mutable_##proterty() { if (proterty##_ == NULL) proterty##_ = new class_name(); return proterty##_; }
+  inline const class_name & proterty() const { return *proterty##_; } \
+  inline void set_##proterty(const class_name & val) { *(mutable_##proterty()) = val; } \
+  inline class_name * mutable_##proterty() { if (proterty##_ == NULL) proterty##_ = new class_name(); return proterty##_; }
 
 // 基本类型，如int
 #define PROPERTY_BASIC_TYPE_DECLARE(class_type, proterty) \
@@ -304,10 +304,10 @@ protected:
 // 自定义对象，存储的是对象指针，分配和释放需要自己管理
 #define PROPERTY_OBJECTPTR_ARRAY_DECLARE(class_name, proterty) \
   inline int proterty_##size() const { return proterty##_.size(); } \
-  inline const std::vector<class_name##*>& proterty() const { return proterty##_; } \
-  inline const class_name##& proterty(int index) const { return *proterty##_[index]; } \
-  inline class_name##* add_##proterty() { class_name* val = new class_name(); proterty##_.push_back(val); return val; } \
-  inline std::vector<class_name##*>* mutable_##proterty() { return &proterty##_; }
+  inline const std::vector<class_name *> & proterty() const { return proterty##_; } \
+  inline const class_name & proterty(int index) const { return *proterty##_[index]; } \
+  inline class_name * add_##proterty() { class_name * val = new class_name(); proterty##_.push_back(val); return val; } \
+  inline std::vector<class_name *>* mutable_##proterty() { return &proterty##_; }
 
 // 基本类型，如int
 #define PROPERTY_BASIC_TYPE_ARRAY_DECLARE(class_type, proterty) \

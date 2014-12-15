@@ -102,7 +102,7 @@ bool BaseAttachData::ParseFromByteStream(const net::ByteStream& is) {
 
 bool BaseAttachData::SerializeToByteStream(net::ByteStream* os) const {
   //attach_data_len_ = ByteSize()-sizeof(attach_data_len_);
-  (*os) << (ByteSize()-sizeof(attach_data_len_))
+  (*os) << (static_cast<uint32>(ByteSize()-sizeof(attach_data_len_)))
         << type_
         << handle_
         << service_type_;
