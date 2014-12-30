@@ -9,8 +9,8 @@
 
 #include "base/logging.h"
 #include "base/memory/scoped_ptr.h"
-#include "base/stringprintf.h"
-#include "base/string_number_conversions.h"
+#include "base/strings/stringprintf.h"
+#include "base/strings/string_number_conversions.h"
 #include "base2/string_util2.h"
 #include "base2/time2.h"
 
@@ -288,7 +288,7 @@ bool ZAresGroupManagerImpl::JoinGroup(const std::vector<uint32>& user_ids, uint3
 
   std::string s_user_ids;
   JoinString(user_ids, ',', &s_user_ids);
-  std::string sql = StringPrintf("SELECT status,userId FROM IMGroupRelation WHERE groupId = %d AND userId IN (%s) GROUP BY userId ORDER BY id", group_id, s_user_ids.c_str());
+  std::string sql = base::StringPrintf("SELECT status,userId FROM IMGroupRelation WHERE groupId = %d AND userId IN (%s) GROUP BY userId ORDER BY id", group_id, s_user_ids.c_str());
 
   db::ScopedPtr_DatabaseConnection db_conn(db_conn_pool_);
   scoped_ptr<db::QueryAnswer> answ(db_conn->Query(sql));
@@ -336,12 +336,12 @@ bool ZAresGroupManagerImpl::JoinGroup(const std::vector<uint32>& user_ids, uint3
 
   int update_count = 0;
   if (!sql.empty()) {
-    sql = StringPrintf("UPDATE IMGroupRelation SET status = 1 WHERE groupId = %d AND userId IN (%s)", group_id, sql.c_str());
+    sql = base::StringPrintf("UPDATE IMGroupRelation SET status = 1 WHERE groupId = %d AND userId IN (%s)", group_id, sql.c_str());
     update_count = db_conn->Execute(sql);
   }
 
   // 更新群计数
-  sql = StringPrintf("UPDATE IMGroup SET memberCnt = memberCnt + %d WHERE groupId = %d LIMIT 1", (insert_count+update_count), group_id);
+  sql = base::StringPrintf("UPDATE IMGroup SET memberCnt = memberCnt + %d WHERE groupId = %d LIMIT 1", (insert_count+update_count), group_id);
   db_conn->Execute(sql);
   return true;
 }
@@ -361,7 +361,7 @@ bool ZAresGroupManagerImpl::QuitGroup(uint32 request_user_id, const std::vector<
 
   std::string s_quit_user_ids;
   JoinString(quit_user_ids, ',', &s_quit_user_ids);
-  std::string sql = StringPrintf("SELECT status,userId FROM IMGroupRelation WHERE groupId = %d AND userId in (%s) GROUP BY userId ORDER BY id", group_id, s_quit_user_ids.c_str());
+  std::string sql = base::StringPrintf("SELECT status,userId FROM IMGroupRelation WHERE groupId = %d AND userId in (%s) GROUP BY userId ORDER BY id", group_id, s_quit_user_ids.c_str());
 
   db::ScopedPtr_DatabaseConnection db_conn(db_conn_pool_);
   scoped_ptr<db::QueryAnswer> answ(db_conn->Query(sql));
@@ -387,13 +387,13 @@ bool ZAresGroupManagerImpl::QuitGroup(uint32 request_user_id, const std::vector<
   }
 
   if (!sql.empty()) {
-    sql = StringPrintf("UPDATE IMGroupRelation SET status = 0, updated=%d  WHERE groupId = %d AND userId IN (%s)", now, group_id, sql.c_str());
+    sql = base::StringPrintf("UPDATE IMGroupRelation SET status = 0, updated=%d  WHERE groupId = %d AND userId IN (%s)", now, group_id, sql.c_str());
     update_count = db_conn->Execute(sql);
   }
 
   // 更新群计数
   // update IMGroup set memberCnt = memberCnt - ? , updated = ? where groupId = ? limit 1
-  sql = StringPrintf("UPDATE IMGroup SET memberCnt = memberCnt - %d, updated = %d WHERE groupId = %d LIMIT 1", update_count, now, group_id);
+  sql = base::StringPrintf("UPDATE IMGroup SET memberCnt = memberCnt - %d, updated = %d WHERE groupId = %d LIMIT 1", update_count, now, group_id);
   db_conn->Execute(sql);
 
   return true;

@@ -10,7 +10,7 @@
 #include "zaresd/message_handler/validate_request_handler.h"
 
 #include "base/logging.h"
-#include "base/stringprintf.h"
+#include "base/strings/stringprintf.h"
 #include "base/memory/scoped_ptr.h"
 
 #include "proto/validate_request.h"
@@ -19,7 +19,7 @@
 #include "zaresd/model/model_main_manager.h"
 #include "zaresd/zares_handler_thread.h"
 
-int ValidateRequestHandler::Execute(ZAresHandlerThread* context, uint64 session_id, const message::MessagePDU* message) {
+int ValidateRequestHandler::Execute(ZAresHandlerThread* context, int io_handler_id, const message::MessagePDU* message) {
   CAST_PROTO_MESSAGE(ValidateRequest, validate_request);
 
   // 2. 取出用户信息，返回给请求客户端
@@ -52,7 +52,7 @@ int ValidateRequestHandler::Execute(ZAresHandlerThread* context, uint64 session_
     }
   }
 
-  if (context) context->SendSessionData(session_id, validate_response);
+  if (context) context->SendSessionData(io_handler_id, validate_response);
 
   return 0;
 }

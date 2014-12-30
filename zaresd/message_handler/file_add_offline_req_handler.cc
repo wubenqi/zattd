@@ -18,7 +18,7 @@
 #include "zaresd/model/model_main_manager.h"
 #include "zaresd/zares_handler_thread.h"
 
-int FileAddOfflineReqHandler::Execute(ZAresHandlerThread* context, uint64 session_id, const message::MessagePDU* message) {
+int FileAddOfflineReqHandler::Execute(ZAresHandlerThread* context, int io_handler_id, const message::MessagePDU* message) {
   CAST_PROTO_MESSAGE(FileAddOfflineReq, file_add_offline_req);
 
   FileManager* file_manager = ModelMainManager::GetInstance()->GetFileManager();
@@ -45,7 +45,7 @@ int FileAddOfflineReqHandler::Execute(ZAresHandlerThread* context, uint64 sessio
 
   db_write_response.set_result(is_sucess ? 0 : 2);
 
-  context->SendSessionData(session_id, db_write_response);
+  context->SendSessionData(io_handler_id, db_write_response);
 
   return 0;
 }

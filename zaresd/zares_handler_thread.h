@@ -9,9 +9,9 @@
 #define ZARESD_ZARES_HANDLER_THREAD_H_
 
 #include "base/threading/thread.h"
-#include "base/timer.h"
+#include "base/timer/timer.h"
 
-#include "net/teamtalk/teamtalk_packet.h"
+#include "net/codec/teamtalk/teamtalk_packet.h"
 #include "message_pdu/message_pdu.h"
 // #include "db/base_database.h"
 
@@ -37,12 +37,12 @@ public:
   //   return dbconn_;
   // }
 
-  void DoMessageDataHandler(uint64 session_id, const TeamTalkPacketPtr& packet);
-  void SendSessionData(uint64 session_id, const message::MessagePDU& message);
+  void DoMessageDataHandler(int io_handler_id, const TeamTalkPacketPtr& packet);
+  void SendSessionData(int io_handler_id, const message::MessagePDU& message);
 
 protected:
   // Process packet from client_comm_handler 
-  void OnMessageDataHandler(uint64 session_id, const TeamTalkPacketPtr& packet);
+  void OnMessageDataHandler(int io_handler_id, const TeamTalkPacketPtr& packet);
 
   // Called just prior to starting the message loop
   virtual void Init();

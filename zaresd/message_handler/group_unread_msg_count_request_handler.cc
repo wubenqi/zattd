@@ -18,7 +18,7 @@
 #include "zaresd/zares_handler_thread.h"
 
 // 获取群未读消息
-int GroupUnreadMsgCountRequestHandler::Execute(ZAresHandlerThread* context, uint64 session_id, const message::MessagePDU* message) {
+int GroupUnreadMsgCountRequestHandler::Execute(ZAresHandlerThread* context, int io_handler_id, const message::MessagePDU* message) {
   CAST_PROTO_MESSAGE(GroupUnreadMsgCountRequest, group_unread_msg_count_request);
 
   GroupManager* group_manger = ModelMainManager::GetInstance()->GetGroupManager();
@@ -41,7 +41,7 @@ int GroupUnreadMsgCountRequestHandler::Execute(ZAresHandlerThread* context, uint
     unread->unread_msg_count = it->second;
   }
   
-  context->SendSessionData(session_id, group_unread_msg_count_response);
+  context->SendSessionData(io_handler_id, group_unread_msg_count_response);
 
   return 0;
 }

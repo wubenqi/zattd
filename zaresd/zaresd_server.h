@@ -7,14 +7,8 @@
 
 #ifndef ZARESD_ZARESD_SERVER_H_
 #define ZARESD_ZARESD_SERVER_H_
-#pragma once
 
-#include "base/memory/ref_counted.h"
 #include "base2/daemon/base_daemon.h"
-
-namespace net {
-class NetEngineManager;
-}
 
 class ZAresdServer : public base::BaseDaemon {
 public:
@@ -23,11 +17,9 @@ public:
 
 protected:
   // ю╢вт net::BaseDaemon
-  virtual int LoadConfig( const FilePath& xml_ini_file );
+  virtual int LoadConfig( const base::FilePath& xml_ini_file );
   virtual int	Initialize( int argc, char** argv );
   virtual int Destroy();
-
-  net::NetEngineManager* net_engine_manager_;
 };
 
 

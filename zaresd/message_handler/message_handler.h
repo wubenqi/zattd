@@ -15,7 +15,7 @@
 class ZAresHandlerThread;
 
 void InitMessageHandlerTable();
-int DispatchMessageHandler(ZAresHandlerThread* context, uint64 session_id, const message::MessagePDU* message);
+int DispatchMessageHandler(ZAresHandlerThread* context, int io_handler_id, const message::MessagePDU* message);
 bool CheckMessageHandler(uint32 message_type);
 
 #endif

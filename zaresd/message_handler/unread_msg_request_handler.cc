@@ -20,7 +20,7 @@
 #include "zaresd/zares_handler_thread.h"
 
 // 读取未读消息, 一次读取最多50条
-int UnreadMsgRequestHandler::Execute(ZAresHandlerThread* context, uint64 session_id, const message::MessagePDU* message) {
+int UnreadMsgRequestHandler::Execute(ZAresHandlerThread* context, int io_handler_id, const message::MessagePDU* message) {
   CAST_PROTO_MESSAGE(UnreadMsgRequest, unread_msg_request);
 
   CounterManager* counter_mananger = ModelMainManager::GetInstance()->GetCounterManager();
@@ -50,7 +50,7 @@ int UnreadMsgRequestHandler::Execute(ZAresHandlerThread* context, uint64 session
     //  LOG(ERROR) << "";
   }
 
-  context->SendSessionData(session_id, msg_list_response);
+  context->SendSessionData(io_handler_id, msg_list_response);
 
   return 0;
 }

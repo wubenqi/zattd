@@ -16,7 +16,7 @@
 class ZAresHandlerThread;
 class FileAddOfflineReqHandler {
 public:
-  static int Execute(ZAresHandlerThread* context, uint64 session_id, const message::MessagePDU* message);
+  static int Execute(ZAresHandlerThread* context, int io_handler_id, const message::MessagePDU* message);
 
 private:
   DISALLOW_IMPLICIT_CONSTRUCTORS(FileAddOfflineReqHandler);

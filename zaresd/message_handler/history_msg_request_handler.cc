@@ -21,7 +21,7 @@
 #define  MAX_HISTORY_MESSAGE_COUNT 50
 
 // 读取历史消息,一次读取最多20条
-int HistoryMsgRequestHandler::Execute(ZAresHandlerThread* context, uint64 session_id, const message::MessagePDU* message) {
+int HistoryMsgRequestHandler::Execute(ZAresHandlerThread* context, int io_handler_id, const message::MessagePDU* message) {
   CAST_PROTO_MESSAGE(HistoryMsgRequest, history_msg_request);
 
   MessageManager* message_manager = ModelMainManager::GetInstance()->GetMessageManager();
@@ -44,7 +44,7 @@ int HistoryMsgRequestHandler::Execute(ZAresHandlerThread* context, uint64 sessio
       count,
       msg_list_response.mutable_msg_list());
 
-  context->SendSessionData(session_id, msg_list_response);
+  context->SendSessionData(io_handler_id, msg_list_response);
 
   return 0;
 }

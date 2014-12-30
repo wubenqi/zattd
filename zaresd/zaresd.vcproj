@@ -172,22 +172,6 @@
 			Name="zaresd"
 			>
 			<File
-				RelativePath=".\client_comm_handler.cc"
-				>
-			</File>
-			<File
-				RelativePath=".\client_comm_handler.h"
-				>
-			</File>
-			<File
-				RelativePath=".\client_comm_manager.cc"
-				>
-			</File>
-			<File
-				RelativePath=".\client_comm_manager.h"
-				>
-			</File>
-			<File
 				RelativePath=".\config_info.cc"
 				>
 			</File>
@@ -201,6 +185,14 @@
 			</File>
 			<File
 				RelativePath=".\register_message_factory.cc"
+				>
+			</File>
+			<File
+				RelativePath=".\zares_comm_manager.cc"
+				>
+			</File>
+			<File
+				RelativePath=".\zares_comm_manager.h"
 				>
 			</File>
 			<File

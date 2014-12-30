@@ -17,7 +17,7 @@
 #include "zaresd/model/model_main_manager.h"
 #include "zaresd/zares_handler_thread.h"
 
-int FileHasOfflineReqHandler::Execute(ZAresHandlerThread* context, uint64 session_id, const message::MessagePDU* message) {
+int FileHasOfflineReqHandler::Execute(ZAresHandlerThread* context, int io_handler_id, const message::MessagePDU* message) {
   CAST_PROTO_MESSAGE(FileHasOfflineReq, file_has_offline_req);
 
   FileManager* file_manager = ModelMainManager::GetInstance()->GetFileManager();
@@ -29,7 +29,7 @@ int FileHasOfflineReqHandler::Execute(ZAresHandlerThread* context, uint64 sessio
  
   file_manager->GetUserFiles(file_has_offline_req->user_id(), file_has_offline_res.mutable_file_list());
 
-  context->SendSessionData(session_id, file_has_offline_res);
+  context->SendSessionData(io_handler_id, file_has_offline_res);
 
   return 0;
 }

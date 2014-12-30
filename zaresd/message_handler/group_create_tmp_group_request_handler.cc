@@ -18,7 +18,7 @@
 #include "zaresd/zares_handler_thread.h"
 
 // ´´½¨Èº
-int GroupCreateTmpGroupRequestHandler::Execute(ZAresHandlerThread* context, uint64 session_id, const message::MessagePDU* message) {
+int GroupCreateTmpGroupRequestHandler::Execute(ZAresHandlerThread* context, int io_handler_id, const message::MessagePDU* message) {
   CAST_PROTO_MESSAGE(GroupCreateTmpGroupRequest, group_create_tmp_group_request);
 
   GroupManager* group_manager = ModelMainManager::GetInstance()->GetGroupManager();
@@ -52,7 +52,7 @@ int GroupCreateTmpGroupRequestHandler::Execute(ZAresHandlerThread* context, uint
   group_create_tmp_group_response.set_group_id(group_id);
 
   if (context) {
-    context->SendSessionData(session_id, group_create_tmp_group_response);
+    context->SendSessionData(io_handler_id, group_create_tmp_group_response);
   }
 
   return 0;

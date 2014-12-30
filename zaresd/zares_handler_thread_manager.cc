@@ -7,7 +7,7 @@
 
 #include "zaresd/zares_handler_thread_manager.h"
 
-#include "base/stringprintf.h"
+#include "base/strings/stringprintf.h"
 // #include "db/conn_pool_manager.h"
 
 #include "zaresd/zares_handler_thread.h"
@@ -22,7 +22,7 @@ void ZAresHandlerThreadManager::Initialize(const base::DBAddrInfo& db_adr) {
 
   std::string thread_name;
   for (size_t i=0; i<thread_pool_size_; ++i) {
-    thread_name = StringPrintf("zares_handler_thread_%d", i);
+    thread_name = base::StringPrintf("zares_handler_thread_%d", i);
     ZAresHandlerThread* thread = new ZAresHandlerThread(thread_name, i/*, db_conn_pool_.GetFreeConnection()*/);
     thread_pool_.push_back(thread);
   }
@@ -56,7 +56,7 @@ void ZAresHandlerThreadManager::Shutdown() {
   }
 }
 
-void ZAresHandlerThreadManager::PostDataToDbHandler(uint64 session_id, const TeamTalkPacketPtr& packet) {
+void ZAresHandlerThreadManager::PostDataToDbHandler(int io_handler_id, const TeamTalkPacketPtr& packet) {
   ZAresHandlerThread* thread = GetNextThread();
-  thread->DoMessageDataHandler(session_id, packet);
+  thread->DoMessageDataHandler(io_handler_id, packet);
 }

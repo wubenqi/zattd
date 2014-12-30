@@ -179,6 +179,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\proto\all_user_response.cc"
+				>
+			</File>
+			<File
 				RelativePath="..\proto\all_user_response.h"
 				>
 			</File>
@@ -559,22 +563,6 @@
 			Name="zaresd"
 			>
 			<File
-				RelativePath="..\zaresd\client_comm_handler.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\zaresd\client_comm_handler.h"
-				>
-			</File>
-			<File
-				RelativePath="..\zaresd\client_comm_manager.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\zaresd\client_comm_manager.h"
-				>
-			</File>
-			<File
 				RelativePath="..\zaresd\config_info.cc"
 				>
 			</File>
@@ -588,6 +576,14 @@
 			</File>
 			<File
 				RelativePath="..\zaresd\register_message_factory.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\zaresd\zares_comm_manager.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\zaresd\zares_comm_manager.h"
 				>
 			</File>
 			<File

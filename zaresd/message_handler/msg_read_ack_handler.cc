@@ -10,7 +10,7 @@
 #include "zaresd/message_handler/msg_read_ack_handler.h"
 
 #include "base/logging.h"
-#include "base/stringprintf.h"
+#include "base/strings/stringprintf.h"
 #include "base/memory/scoped_ptr.h"
 #include "base2/base_types.h"
 
@@ -22,7 +22,7 @@
 
 // 未读消息清零
 // 清理消息计数，已读
-int MsgReadAckHandler::Execute(ZAresHandlerThread* context, uint64 session_id, const message::MessagePDU* message) {
+int MsgReadAckHandler::Execute(ZAresHandlerThread* context, int io_handler_id, const message::MessagePDU* message) {
   // <int>requestId</int>
   // <int>userId</int> --> from_user_id
   // <int>friendUserId</int> --> to_user_id
@@ -47,7 +47,7 @@ int MsgReadAckHandler::Execute(ZAresHandlerThread* context, uint64 session_id, c
   }
   counter_manager->DeleteUserReadedDialogMessages(msg_read_ack->from_user_id(), msg_read_ack->to_user_id(), msg_read_ack->client_type());
 
-  context->SendSessionData(session_id, db_write_response);
+  context->SendSessionData(io_handler_id, db_write_response);
 
   return 0;
 }

@@ -19,7 +19,7 @@
 #include "zaresd/zares_handler_thread.h"
 
 // 获得群历史消息
-int GroupHistoryMsgRequestHandler::Execute(ZAresHandlerThread* context, uint64 session_id, const message::MessagePDU* message) {
+int GroupHistoryMsgRequestHandler::Execute(ZAresHandlerThread* context, int io_handler_id, const message::MessagePDU* message) {
   CAST_PROTO_MESSAGE(GroupHistoryMsgRequest, group_history_msg_request);
 
   CounterManager* counter_manager = ModelMainManager::GetInstance()->GetCounterManager();
@@ -38,7 +38,7 @@ int GroupHistoryMsgRequestHandler::Execute(ZAresHandlerThread* context, uint64 s
       group_history_msg_request->msg_count(),
       group_msg_list_response.mutable_msg_list());
 
-  context->SendSessionData(session_id, group_msg_list_response);
+  context->SendSessionData(io_handler_id, group_msg_list_response);
 
   return 0;
 }

@@ -9,7 +9,7 @@
 
 #include "base/logging.h"
 #include "base/memory/scoped_ptr.h"
-#include "base/stringprintf.h"
+#include "base/strings/stringprintf.h"
 #include "base2/string_util2.h"
 
 #include "db/conn_pool_manager.h"

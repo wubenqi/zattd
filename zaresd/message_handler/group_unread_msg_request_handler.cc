@@ -17,7 +17,7 @@
 #include "zaresd/model/model_main_manager.h"
 #include "zaresd/zares_handler_thread.h"
 
-int GroupUnreadMsgRequestHandler::Execute(ZAresHandlerThread* context, uint64 session_id, const message::MessagePDU* message) {
+int GroupUnreadMsgRequestHandler::Execute(ZAresHandlerThread* context, int io_handler_id, const message::MessagePDU* message) {
   CAST_PROTO_MESSAGE(GroupUnreadMsgRequest, group_unread_msg_request);
 
   CounterManager* counter_manager = ModelMainManager::GetInstance()->GetCounterManager();
@@ -43,7 +43,7 @@ int GroupUnreadMsgRequestHandler::Execute(ZAresHandlerThread* context, uint64 se
       group_counter_item.user_unread_count,
       group_msg_list_response.mutable_msg_list());
 
-  context->SendSessionData(session_id, group_msg_list_response);
+  context->SendSessionData(io_handler_id, group_msg_list_response);
 
   return 0;
 }

@@ -16,7 +16,7 @@
 #include "base/atomic_sequence_num.h"
 #include "base2/config_file_util.h"
 
-#include "net/teamtalk/teamtalk_packet.h"
+#include "net/codec/teamtalk/teamtalk_packet.h"
 
 #include "db/conn_pool_manager.h"
 
@@ -41,7 +41,7 @@ public:
     }
   }
   
-  void PostDataToDbHandler(uint64 session_id, const TeamTalkPacketPtr& packet);
+  void PostDataToDbHandler(int io_handler_id, const TeamTalkPacketPtr& packet);
 
 private:
   friend struct DefaultSingletonTraits<ZAresHandlerThreadManager>;

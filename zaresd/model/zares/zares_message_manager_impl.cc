@@ -9,7 +9,7 @@
 
 #include "base/logging.h"
 #include "base/memory/scoped_ptr.h"
-#include "base/stringprintf.h"
+#include "base/strings/stringprintf.h"
 #include "base2/time2.h"
 
 #include "db/conn_pool_manager.h"
@@ -60,7 +60,7 @@ size_t ZAresMessageManagerImpl::GetMessages(uint32 from_user_id, uint32 to_user_
   }
   db::ScopedPtr_DatabaseConnection db_conn(db_conn_pool_);
 
-  std::string sql = StringPrintf(
+  std::string sql = base::StringPrintf(
     "SELECT id,relateId,type,content,status,created,updated FROM IMMessage WHERE "
     "relateId=%d AND fromUserId = %d AND toUserId = %d AND status = 0 ORDER BY created DESC, id DESC LIMIT %d, %d",
     relate_id,from_user_id,to_user_id,offset,count);

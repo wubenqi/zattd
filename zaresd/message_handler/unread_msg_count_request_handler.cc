@@ -10,7 +10,7 @@
 #include "zaresd/message_handler/unread_msg_count_request_handler.h"
 
 #include "base/logging.h"
-#include "base/stringprintf.h"
+#include "base/strings/stringprintf.h"
 #include "base/memory/scoped_ptr.h"
 
 #include "proto/unread_msg_count_request.h"
@@ -20,7 +20,7 @@
 #include "zaresd/zares_handler_thread.h"
 
 // 获得未读消息计数
-int UnreadMsgCountRequestHandler::Execute(ZAresHandlerThread* context, uint64 session_id, const message::MessagePDU* message) {
+int UnreadMsgCountRequestHandler::Execute(ZAresHandlerThread* context, int io_handler_id, const message::MessagePDU* message) {
   CAST_PROTO_MESSAGE(UnreadMsgCountRequest, unread_msg_count_request);
 
   CounterManager* counter_manager = ModelMainManager::GetInstance()->GetCounterManager();
@@ -41,7 +41,7 @@ int UnreadMsgCountRequestHandler::Execute(ZAresHandlerThread* context, uint64 se
     unread->unread_msg_count = it->second;
   }
 
-  context->SendSessionData(session_id, unread_msg_count_response);
+  context->SendSessionData(io_handler_id, unread_msg_count_response);
 
   return 0;
 }

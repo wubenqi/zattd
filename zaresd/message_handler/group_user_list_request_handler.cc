@@ -18,7 +18,7 @@
 #include "zaresd/zares_handler_thread.h"
 
 // 获取群详细信息
-int GroupUserListRequestHandler::Execute(ZAresHandlerThread* context, uint64 session_id, const message::MessagePDU* message) {
+int GroupUserListRequestHandler::Execute(ZAresHandlerThread* context, int io_handler_id, const message::MessagePDU* message) {
   CAST_PROTO_MESSAGE(GroupUserListRequest, group_user_list_request);
 
   GroupManager* group_manager = ModelMainManager::GetInstance()->GetGroupManager();
@@ -48,7 +48,7 @@ int GroupUserListRequestHandler::Execute(ZAresHandlerThread* context, uint64 ses
   }
 
   if (context) {
-    context->SendSessionData(session_id, group_user_list_response);
+    context->SendSessionData(io_handler_id, group_user_list_response);
   }
 
   return 0;

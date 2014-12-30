@@ -19,7 +19,7 @@
 
 
 // 返回用户加入的群信息
-int GroupListRequestHandler::Execute(ZAresHandlerThread* context, uint64 session_id, const message::MessagePDU* message) {
+int GroupListRequestHandler::Execute(ZAresHandlerThread* context, int io_handler_id, const message::MessagePDU* message) {
   CAST_PROTO_MESSAGE(GroupListRequest, group_list_request);
 
   GroupManager* group_manager = ModelMainManager::GetInstance()->GetGroupManager();
@@ -50,7 +50,7 @@ int GroupListRequestHandler::Execute(ZAresHandlerThread* context, uint64 session
   }
 
   if (context) {
-    context->SendSessionData(session_id, group_list_response);
+    context->SendSessionData(io_handler_id, group_list_response);
   }
 
   return 0;

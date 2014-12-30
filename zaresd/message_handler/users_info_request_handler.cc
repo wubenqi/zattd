@@ -18,7 +18,7 @@
 #include "zaresd/zares_handler_thread.h"
 
 // 获取用户信息
-int UsersInfoRequestHandler::Execute(ZAresHandlerThread* context, uint64 session_id, const message::MessagePDU* message) {
+int UsersInfoRequestHandler::Execute(ZAresHandlerThread* context, int io_handler_id, const message::MessagePDU* message) {
   CAST_PROTO_MESSAGE(UsersInfoRequest, users_info_request);
 
   UserManager* user_manager = ModelMainManager::GetInstance()->GetUserManager();
@@ -35,7 +35,7 @@ int UsersInfoRequestHandler::Execute(ZAresHandlerThread* context, uint64 session
   }
 
   if (context) {
-    context->SendSessionData(session_id, users_info_response);
+    context->SendSessionData(io_handler_id, users_info_response);
   }
 
   return 0;

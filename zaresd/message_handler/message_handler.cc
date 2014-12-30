@@ -10,7 +10,7 @@
 #include "zaresd/message_handler/message_handler.h"
 
 #include "base/lazy_instance.h"
-#include "base/hash_tables.h"
+#include "base/containers/hash_tables.h"
 
 #include "proto/const_message_pdu_types.h"
 
@@ -43,7 +43,7 @@
 #include "zaresd/message_handler/file_del_offline_req_handler.h"
 #include "zaresd/message_handler/file_has_offline_req_handler.h"
 
-typedef int (*ExecuteHandlerFunc)(ZAresHandlerThread* context, uint64 session_id, const message::MessagePDU* message);
+typedef int (*ExecuteHandlerFunc)(ZAresHandlerThread* context, int io_handler_id, const message::MessagePDU* message);
 // int (*execute_handler)(ZAresHandlerThread* context, uint64 session_id, const message::MessagePDU* message);
 
 struct MessageHandler {
@@ -95,12 +95,12 @@ void  InitMessageHandlerTable() {
   g_message_handlers.Get()[MESSAGE_FILE_DEL_OFFLINE_REQ] = MessageHandler(&FileDelOfflineReqHandler::Execute);
 }
 
-int DispatchMessageHandler(ZAresHandlerThread* context, uint64 session_id, const message::MessagePDU* message) {
+int DispatchMessageHandler(ZAresHandlerThread* context, int io_handler_id, const message::MessagePDU* message) {
   MessageHandlerMap::iterator it = g_message_handlers.Get().find(message->message_type());
   if (it == g_message_handlers.Get().end()) {
     LOG(ERROR) << "Not impl handler: " << message->message_type();
   } else {
-    (it->second.execute_handler)(context, session_id, message);
+    (it->second.execute_handler)(context, io_handler_id, message);
   }
   return 0;
 }

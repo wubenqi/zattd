@@ -10,9 +10,9 @@
 
 #include "base/logging.h"
 #include "base/memory/scoped_ptr.h"
-#include "base/stringprintf.h"
+#include "base/strings/stringprintf.h"
 #include "base2/time2.h"
-#include "base/string_number_conversions.h"
+#include "base/strings/string_number_conversions.h"
 
 #include "db/database_util.h"
 #include "db/conn_pool_manager.h"
@@ -25,7 +25,7 @@ size_t ZAresFileManagerImpl::GetUserFiles(uint32 to_user_id, std::vector<Offline
   }
 
   uint32 t = base::NowMSTime()-7*24*3600;
-  std::string sql = StringPrintf("SELECT id,userId,toUserId,taskId,filePath,status,created,updated,fsize FROM IMTransmitFile WHERE toUserId = %d AND created > %d AND status = 1 ORDER BY created DESC LIMIT 50",
+  std::string sql = base::StringPrintf("SELECT id,userId,toUserId,taskId,filePath,status,created,updated,fsize FROM IMTransmitFile WHERE toUserId = %d AND created > %d AND status = 1 ORDER BY created DESC LIMIT 50",
         to_user_id,
         t);
 
@@ -87,7 +87,7 @@ bool ZAresFileManagerImpl::DeleteFileRecord(const std::string& task_id) {
     return false;
   }
 
-  std::string sql = StringPrintf("UPDATE IMTransmitFile SET status = 0, updated = %d WHERE taskId = '%s' LIMIT 1", base::NowMSTime(), task_id.c_str());
+  std::string sql = base::StringPrintf("UPDATE IMTransmitFile SET status = 0, updated = %d WHERE taskId = '%s' LIMIT 1", base::NowMSTime(), task_id.c_str());
   db::ScopedPtr_DatabaseConnection db_conn(db_conn_pool_);
   if (db_conn->Execute(sql) <=0 ) {
     LOG(ERROR) << "Error execute sql: " << sql;
@@ -101,7 +101,7 @@ const TransmitFile* ZAresFileManagerImpl::GetFileRecord(const std::string& task_
     return NULL;
   }
 
-  std::string sql = StringPrintf("SELECT id,userId,toUserId,taskId,filePath,status,created,updated,fsize FROM IMTransmitFile WHERE taskId = '%s'", task_id.c_str());
+  std::string sql = base::StringPrintf("SELECT id,userId,toUserId,taskId,filePath,status,created,updated,fsize FROM IMTransmitFile WHERE taskId = '%s'", task_id.c_str());
 
   db::ScopedPtr_DatabaseConnection db_conn(db_conn_pool_);
 

@@ -18,7 +18,7 @@
 #include "zaresd/zares_handler_thread.h"
 
 // 加入或退出群
-int GroupChangeMemberRequestHandler::Execute(ZAresHandlerThread* context, uint64 session_id, const message::MessagePDU* message) {
+int GroupChangeMemberRequestHandler::Execute(ZAresHandlerThread* context, int io_handler_id, const message::MessagePDU* message) {
   CAST_PROTO_MESSAGE(GroupChangeMemberRequest, group_change_member_request);
 
   GroupManager* group_manager = ModelMainManager::GetInstance()->GetGroupManager();
@@ -59,7 +59,7 @@ int GroupChangeMemberRequestHandler::Execute(ZAresHandlerThread* context, uint64
   group_change_member_response.set_change_type(change_type);
 
   if (context) {
-    context->SendSessionData(session_id, group_change_member_response);
+    context->SendSessionData(io_handler_id, group_change_member_response);
   }
  
   return 0;

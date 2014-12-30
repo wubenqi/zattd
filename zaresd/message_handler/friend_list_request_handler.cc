@@ -10,7 +10,7 @@
 #include "zaresd/message_handler/friend_list_request_handler.h"
 
 #include "base/logging.h"
-#include "base/stringprintf.h"
+#include "base/strings/stringprintf.h"
 #include "base/memory/scoped_ptr.h"
 
 #include "proto/friend_list_request.h"
@@ -19,7 +19,7 @@
 #include "zaresd/model/model_main_manager.h"
 #include "zaresd/zares_handler_thread.h"
 
-int FriendListRequestHandler::Execute(ZAresHandlerThread* context, uint64 session_id, const message::MessagePDU* message) {
+int FriendListRequestHandler::Execute(ZAresHandlerThread* context, int io_handler_id, const message::MessagePDU* message) {
   CAST_PROTO_MESSAGE(FriendListRequest, friend_list_request);
 
   FriendListResponse friend_list_response;
@@ -35,7 +35,7 @@ int FriendListRequestHandler::Execute(ZAresHandlerThread* context, uint64 sessio
   }
 
   if (context) {
-    context->SendSessionData(session_id, friend_list_response);
+    context->SendSessionData(io_handler_id, friend_list_response);
   }
 
   return 0;

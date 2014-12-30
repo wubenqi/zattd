@@ -9,7 +9,7 @@
 
 #include "base/logging.h"
 #include "base/memory/scoped_ptr.h"
-#include "base/stringprintf.h"
+#include "base/strings/stringprintf.h"
 #include "db/conn_pool_manager.h"
 
 bool ZAresLoginManagerImpl::Auth(const std::string& user_name, const std::string& password) {

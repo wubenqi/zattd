@@ -14,7 +14,7 @@
 #include "message_pdu/message_pdu_util.h"
 
 #include "zaresd/message_handler/message_handler.h"
-#include "zaresd/client_comm_manager.h"
+#include "zaresd/zares_comm_manager.h"
 
 // A lazily created thread local storage for quick access to a thread's message
 // loop, if one exists.  This should be safe and free of static constructors.
@@ -39,7 +39,7 @@ ZAresHandlerThread::~ZAresHandlerThread() {
 // }
 
 bool ZAresHandlerThread::Run() {
-  base::Thread::Options options(MessageLoop::TYPE_DEFAULT, 0);
+  base::Thread::Options options(base::MessageLoop::TYPE_DEFAULT, 0);
   return StartWithOptions(options);
 }
 
@@ -61,20 +61,21 @@ void ZAresHandlerThread::CleanUp() {
   }
 }
 
-void ZAresHandlerThread::DoMessageDataHandler(uint64 session_id, const TeamTalkPacketPtr& packet) {
-  message_loop()->PostTask(FROM_HERE, base::Bind(&ZAresHandlerThread::OnMessageDataHandler, base::Unretained(this), session_id, packet));
+void ZAresHandlerThread::DoMessageDataHandler(int io_handler_id, const TeamTalkPacketPtr& packet) {
+  message_loop()->PostTask(FROM_HERE, base::Bind(&ZAresHandlerThread::OnMessageDataHandler, base::Unretained(this), io_handler_id, packet));
 }
 
-void ZAresHandlerThread::OnMessageDataHandler(uint64 session_id, const TeamTalkPacketPtr& packet) {
+void ZAresHandlerThread::OnMessageDataHandler(int io_handler_id, const TeamTalkPacketPtr& packet) {
   scoped_ptr<message::MessagePDU> message(message::ParseMessagePDUFromNetPacker(packet));
   if (message.get() != NULL) {
-    DispatchMessageHandler(this, session_id, message.get());
+    DispatchMessageHandler(this, io_handler_id, message.get());
   } else {
     // LOG(ERROR) << "";
   }
 }
 
-void ZAresHandlerThread::SendSessionData(uint64 session_id, const message::MessagePDU& message) {
-  net::IOBufferPtr io_buffer = message::MessageToIOBuffer(message);
-  ClientCommManager::GetInstance()->SendSessionData(session_id, io_buffer);
+void ZAresHandlerThread::SendSessionData(int io_handler_id, const message::MessagePDU& message) {
+  TeamTalkPacketPtr packet = message::MessageToPacket(message);
+  // net::IOBufferPtr io_buffer = message::MessageToIOBuffer(message);
+  ZAresCommManager::GetInstance()->SendPacket(io_handler_id, packet);
 }

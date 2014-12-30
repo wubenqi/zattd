@@ -20,7 +20,7 @@
 #include "zaresd/zares_handler_thread.h"
 
 // 发送消息(点对点、群)
-int MsgDataHandler::Execute(ZAresHandlerThread* context, uint64 session_id, const message::MessagePDU* message) {
+int MsgDataHandler::Execute(ZAresHandlerThread* context, int io_handler_id, const message::MessagePDU* message) {
   CAST_PROTO_MESSAGE(MsgData, msg_data);
 
   MessageManager* message_manager = ModelMainManager::GetInstance()->GetMessageManager();
@@ -91,7 +91,7 @@ int MsgDataHandler::Execute(ZAresHandlerThread* context, uint64 session_id, cons
   db_write_response.set_result(is_sucess ? 0 : 1);
 
   if (context) {
-    context->SendSessionData(session_id, db_write_response);
+    context->SendSessionData(io_handler_id, db_write_response);
   }
 
   return 0;

@@ -17,7 +17,7 @@
 #include "zaresd/model/model_main_manager.h"
 #include "zaresd/zares_handler_thread.h"
 
-int AllUserRequestHandler::Execute(ZAresHandlerThread* context, uint64 session_id, const message::MessagePDU* message) {
+int AllUserRequestHandler::Execute(ZAresHandlerThread* context, int io_handler_id, const message::MessagePDU* message) {
   CAST_PROTO_MESSAGE(AllUserRequest, all_user_request);
 
   AllUserResponse all_user_response;
@@ -33,7 +33,7 @@ int AllUserRequestHandler::Execute(ZAresHandlerThread* context, uint64 session_i
   }
 
   if (context) {
-    context->SendSessionData(session_id, all_user_response);
+    context->SendSessionData(io_handler_id, all_user_response);
   }
 
   return 0;

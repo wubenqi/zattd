@@ -10,7 +10,7 @@
 #include "zaresd/message_handler/department_request_handler.h"
 
 #include "base/logging.h"
-#include "base/stringprintf.h"
+#include "base/strings/stringprintf.h"
 #include "base/memory/scoped_ptr.h"
 
 #include "proto/department_request.h"
@@ -19,7 +19,7 @@
 #include "zaresd/model/model_main_manager.h"
 #include "zaresd/zares_handler_thread.h"
 
-int DepartmentRequestHandler::Execute(ZAresHandlerThread* context, uint64 session_id, const message::MessagePDU* message) {
+int DepartmentRequestHandler::Execute(ZAresHandlerThread* context, int io_handler_id, const message::MessagePDU* message) {
   CAST_PROTO_MESSAGE(DepartmentRequest, department_request);
 
   LOG(INFO) << "DepartmentRequestHandler::Execute(): req_user_id = " << department_request->req_user_id();
@@ -34,7 +34,7 @@ int DepartmentRequestHandler::Execute(ZAresHandlerThread* context, uint64 sessio
   }
 
   if (context) {
-    context->SendSessionData(session_id, department_response);
+    context->SendSessionData(io_handler_id, department_response);
   }
 
   return 0;

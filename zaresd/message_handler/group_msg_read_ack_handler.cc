@@ -19,7 +19,7 @@
 #include "zaresd/zares_handler_thread.h"
 
 // 清除用户在这个群的未读消息计数，全部置为已读
-int GroupMsgReadAckHandler::Execute(ZAresHandlerThread* context, uint64 session_id, const message::MessagePDU* message) {
+int GroupMsgReadAckHandler::Execute(ZAresHandlerThread* context, int io_handler_id, const message::MessagePDU* message) {
   CAST_PROTO_MESSAGE(GroupMsgReadAck, group_msg_read_ack);
 
   LOG(INFO) << "Clear counter, msg_read_ack: ";
@@ -39,7 +39,7 @@ int GroupMsgReadAckHandler::Execute(ZAresHandlerThread* context, uint64 session_
   db_write_response.set_from_id(group_msg_read_ack->req_user_id());
   db_write_response.set_to_id(group_msg_read_ack->group_id());
 
-  context->SendSessionData(session_id, db_write_response);
+  context->SendSessionData(io_handler_id, db_write_response);
 
   return 0;
 }

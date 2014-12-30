@@ -9,9 +9,9 @@
 
 #include "base/logging.h"
 #include "base/memory/scoped_ptr.h"
-#include "base/stringprintf.h"
+#include "base/strings/stringprintf.h"
 #include "base2/time2.h"
-#include "base/string_number_conversions.h"
+#include "base/strings/string_number_conversions.h"
 
 #include "db/database_util.h"
 #include "db/conn_pool_manager.h"
@@ -49,7 +49,7 @@ bool ZAresRelationshipManagerImpl::GetRecentContactByUserId(uint32 user_id, int 
 
   db::ScopedPtr_DatabaseConnection db_conn(db_conn_pool_);
 
-  std::string sql = StringPrintf(
+  std::string sql = base::StringPrintf(
       "SELECT relateId,friendUserId,status,created,updated FROM IMRecentContact WHERE userId = %d AND status = 0 ORDER BY updated DESC, relateId DESC LIMIT 100",
       user_id
     );
@@ -151,7 +151,7 @@ bool ZAresRelationshipManagerImpl::CheckAndUpdateRelation(uint32 usera_id, uint3
 
   bool is_sucess = false;
   if (!relate_ids.empty()) {
-    sql = StringPrintf("UPDATE IMRecentContact SET status = 0 WHERE relateId in (%s) LIMIT 4", relate_ids.c_str());
+    sql = base::StringPrintf("UPDATE IMRecentContact SET status = 0 WHERE relateId in (%s) LIMIT 4", relate_ids.c_str());
     is_sucess = ( 0 == db_conn->Execute(sql));
   }
 
