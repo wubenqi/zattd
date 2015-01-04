@@ -31,8 +31,8 @@ public:
   }
 
 protected:
-  virtual bool ParseFromByteStream(const net::ByteStream& is);
-  virtual bool SerializeToByteStream(net::ByteStream* os) const;
+  virtual bool ParseFromByteStream(const base::ByteStream& is);
+  virtual bool SerializeToByteStream(base::ByteStream* os) const;
 
   uint32 request_id_;
   uint32 from_user_id_;

@@ -27,8 +27,8 @@ public:
   }
 
 protected:
-  virtual bool ParseFromByteStream(const net::ByteStream& is);
-  virtual bool SerializeToByteStream(net::ByteStream* os) const;
+  virtual bool ParseFromByteStream(const base::ByteStream& is);
+  virtual bool SerializeToByteStream(base::ByteStream* os) const;
 
   uint32 seq_no_;
   uint32 user_id_;

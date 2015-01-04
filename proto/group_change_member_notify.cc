@@ -7,7 +7,7 @@
 
 #include "proto/group_change_member_notify.h"
 
-bool GroupChangeMemberNotify::ParseFromByteStream(const net::ByteStream& is) {
+bool GroupChangeMemberNotify::ParseFromByteStream(const base::ByteStream& is) {
   is >> group_id_;
 
   PARSE_BASICTYPE_ARRAY_IMPLICIT(uint32, user_list_);
@@ -15,7 +15,7 @@ bool GroupChangeMemberNotify::ParseFromByteStream(const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool GroupChangeMemberNotify::SerializeToByteStream(net::ByteStream* os) const {
+bool GroupChangeMemberNotify::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << group_id_;
 
   SERIALIZE_BASICTYPE_ARRAY_IMPLICIT(user_list_);

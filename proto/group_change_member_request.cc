@@ -7,7 +7,7 @@
 
 #include "proto/group_change_member_request.h"
 
-bool GroupChangeMemberRequest::ParseFromByteStream(const net::ByteStream& is) {
+bool GroupChangeMemberRequest::ParseFromByteStream(const base::ByteStream& is) {
   is >> req_user_id_
     >> req_user_id_
     >> group_id_;
@@ -17,7 +17,7 @@ bool GroupChangeMemberRequest::ParseFromByteStream(const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool GroupChangeMemberRequest::SerializeToByteStream(net::ByteStream* os) const {
+bool GroupChangeMemberRequest::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << change_type_
     << req_user_id_
     << group_id_;

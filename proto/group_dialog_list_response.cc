@@ -19,7 +19,7 @@ static uint32 ByteSize(const GroupInfo& group_info) {
     CalculateContainerByteSize(group_info.group_memeber_list);
 }
 
-static bool ParseFromByteStream(GroupInfo* group_info, const net::ByteStream& is) {
+static bool ParseFromByteStream(GroupInfo* group_info, const base::ByteStream& is) {
   is >> group_info->group_id;
   is.ReadString(group_info->group_name);
   is.ReadString(group_info->group_avatar);
@@ -31,7 +31,7 @@ static bool ParseFromByteStream(GroupInfo* group_info, const net::ByteStream& is
   return !is.Fail();
 }
 
-static bool SerializeToByteStream(const GroupInfo& group_info,  net::ByteStream* os) {
+static bool SerializeToByteStream(const GroupInfo& group_info,  base::ByteStream* os) {
   (*os) << group_info.group_id;
   os->WriteString(group_info.group_name);
   os->WriteString(group_info.group_avatar);
@@ -53,7 +53,7 @@ uint32 GroupDialogListResponse::ByteSize() const {
   // return BaseTeamTalkPDU::ByteSize() + sizeof(req_user_id_) + CalculateContainerByteSize(group_list_);
 }
 
-bool GroupDialogListResponse::ParseFromByteStream(const net::ByteStream& is) {
+bool GroupDialogListResponse::ParseFromByteStream(const base::ByteStream& is) {
   is >> req_user_id_;
 
   PARSE_OBJECTPTR_ARRAY_IMPLICIT(GroupInfo, group_list_);
@@ -61,7 +61,7 @@ bool GroupDialogListResponse::ParseFromByteStream(const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool GroupDialogListResponse::SerializeToByteStream(net::ByteStream* os) const {
+bool GroupDialogListResponse::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << req_user_id_;
 
   SERIALIZE_OBJECTPTR_ARRAY_IMPLICIT(group_list_);

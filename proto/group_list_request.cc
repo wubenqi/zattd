@@ -7,13 +7,13 @@
 
 #include "proto/group_list_request.h"
 
-bool GroupListRequest::ParseFromByteStream(const net::ByteStream& is) {
+bool GroupListRequest::ParseFromByteStream(const base::ByteStream& is) {
   is >> user_id_;
 
   return !is.Fail();
 }
 
-bool GroupListRequest::SerializeToByteStream(net::ByteStream* os) const {
+bool GroupListRequest::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << user_id_;
 
   return !os->Fail();

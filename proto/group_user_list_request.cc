@@ -7,14 +7,14 @@
 
 #include "proto/group_user_list_request.h"
 
-bool GroupUserListRequest::ParseFromByteStream(const net::ByteStream& is) {
+bool GroupUserListRequest::ParseFromByteStream(const base::ByteStream& is) {
   is >> req_user_id_
     >> group_id_;
 
   return !is.Fail();
 }
 
-bool GroupUserListRequest::SerializeToByteStream(net::ByteStream* os) const {
+bool GroupUserListRequest::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << req_user_id_
     << group_id_;
 

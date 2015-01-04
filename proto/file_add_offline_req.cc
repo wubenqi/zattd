@@ -7,7 +7,7 @@
 
 #include "proto/file_add_offline_req.h"
 
-bool FileAddOfflineReq::ParseFromByteStream(const net::ByteStream& is) {
+bool FileAddOfflineReq::ParseFromByteStream(const base::ByteStream& is) {
   is >> req_user_id_
     >> from_id_
     >> to_id_;
@@ -20,7 +20,7 @@ bool FileAddOfflineReq::ParseFromByteStream(const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool FileAddOfflineReq::SerializeToByteStream(net::ByteStream* os) const {
+bool FileAddOfflineReq::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << req_user_id_
     << from_id_
     << to_id_;

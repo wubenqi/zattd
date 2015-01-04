@@ -15,7 +15,7 @@ uint32 ByteSize(const GroupMsg& group_msg) {
     SIZEOF_STRING(group_msg.msg_content);
 }
 
-bool ParseFromByteStream(GroupMsg* group_msg, const net::ByteStream& is) {
+bool ParseFromByteStream(GroupMsg* group_msg, const base::ByteStream& is) {
   is >> group_msg->from_user_id
     >> group_msg->create_time;
   is.ReadString(group_msg->msg_content);
@@ -23,7 +23,7 @@ bool ParseFromByteStream(GroupMsg* group_msg, const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool SerializeToByteStream(const GroupMsg& group_msg, net::ByteStream* os) {
+bool SerializeToByteStream(const GroupMsg& group_msg, base::ByteStream* os) {
   (*os) << group_msg.from_user_id
     << group_msg.create_time;
   os->WriteString(group_msg.msg_content);
@@ -40,7 +40,7 @@ uint32 GroupMsgListResponse::ByteSize() const {
   return size;
 }
 
-bool GroupMsgListResponse::ParseFromByteStream(const net::ByteStream& is) {
+bool GroupMsgListResponse::ParseFromByteStream(const base::ByteStream& is) {
   is >> req_user_id_
     >> request_cmd_id_
     >> group_id_;
@@ -50,7 +50,7 @@ bool GroupMsgListResponse::ParseFromByteStream(const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool GroupMsgListResponse::SerializeToByteStream(net::ByteStream* os) const {
+bool GroupMsgListResponse::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << req_user_id_
     << request_cmd_id_
     << group_id_;

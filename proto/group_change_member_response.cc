@@ -16,7 +16,7 @@ uint32 GroupChangeMemberResponse::ByteSize() const {
     CalculateContainerByteSize(user_list_);
 }
 
-bool GroupChangeMemberResponse::ParseFromByteStream(const net::ByteStream& is) {
+bool GroupChangeMemberResponse::ParseFromByteStream(const base::ByteStream& is) {
   is >> req_user_id_
     >> result_
     >> group_id_
@@ -27,7 +27,7 @@ bool GroupChangeMemberResponse::ParseFromByteStream(const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool GroupChangeMemberResponse::SerializeToByteStream(net::ByteStream* os) const {
+bool GroupChangeMemberResponse::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << req_user_id_
     << result_
     << group_id_

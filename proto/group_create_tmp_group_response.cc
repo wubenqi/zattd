@@ -16,7 +16,7 @@ uint32 GroupCreateTmpGroupResponse::ByteSize() const {
     CalculateContainerByteSize(user_list_);
 }
 
-bool GroupCreateTmpGroupResponse::ParseFromByteStream(const net::ByteStream& is) {
+bool GroupCreateTmpGroupResponse::ParseFromByteStream(const base::ByteStream& is) {
   is >> req_user_id_
     >> result_
     >> group_id_;
@@ -28,7 +28,7 @@ bool GroupCreateTmpGroupResponse::ParseFromByteStream(const net::ByteStream& is)
   return !is.Fail();
 }
 
-bool GroupCreateTmpGroupResponse::SerializeToByteStream(net::ByteStream* os) const {
+bool GroupCreateTmpGroupResponse::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << req_user_id_
     << result_
     << group_id_;

@@ -7,13 +7,13 @@
 
 #include "proto/department_request.h"
 
-bool DepartmentRequest::ParseFromByteStream(const net::ByteStream& is) {
+bool DepartmentRequest::ParseFromByteStream(const base::ByteStream& is) {
   is >> req_user_id_;
 
   return !is.Fail();
 }
 
-bool DepartmentRequest::SerializeToByteStream(net::ByteStream* os) const {
+bool DepartmentRequest::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << req_user_id_;
 
   return !os->Fail();

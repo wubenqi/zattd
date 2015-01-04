@@ -7,7 +7,7 @@
 
 #include "proto/remove_session_response.h"
 
-bool RemoveSessionResponse::ParseFromByteStream(const net::ByteStream& is) {
+bool RemoveSessionResponse::ParseFromByteStream(const base::ByteStream& is) {
   is >> req_user_id_
     >> result_
     >> session_id_
@@ -16,7 +16,7 @@ bool RemoveSessionResponse::ParseFromByteStream(const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool RemoveSessionResponse::SerializeToByteStream(net::ByteStream* os) const {
+bool RemoveSessionResponse::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << req_user_id_
     << result_
     << session_id_

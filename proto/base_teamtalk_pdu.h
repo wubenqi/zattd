@@ -15,9 +15,10 @@
 #include <vector>
 
 #include "base/stl_util.h"
+#include "base2/byte_stream.h"
+
 #include "message_pdu/message_pdu.h"
 
-#include "net/base/byte_stream.h"
 
 #include "proto/const_message_pdu_types.h"
 #include "proto/attach_data.h"
@@ -42,8 +43,8 @@ class QueryAnswer;
 //////////////////////////////////////////////////////////////////////////
 struct UserInfo {
   uint32 ByteSize() const;
-  bool ParseFromByteStream(const net::ByteStream& is);
-  bool SerializeToByteStream(net::ByteStream* os) const;
+  bool ParseFromByteStream(const base::ByteStream& is);
+  bool SerializeToByteStream(base::ByteStream* os) const;
 
 #ifdef ZARESD_SERVER_LIB
   bool ParseFromDatabase(const db::QueryAnswer& answ);
@@ -69,14 +70,14 @@ struct FriendInfo {
     return sizeof(friend_user_id) + sizeof(updated);
   }
 
-  bool ParseFromByteStream(const net::ByteStream& is) {
+  bool ParseFromByteStream(const base::ByteStream& is) {
     is >> friend_user_id
       >> updated;
 
     return !is.Fail();
   }
 
-  bool SerializeToByteStream(net::ByteStream* os) const {
+  bool SerializeToByteStream(base::ByteStream* os) const {
     (*os) << friend_user_id
       << updated;
 
@@ -93,8 +94,8 @@ struct FriendInfo {
 
 struct DepartmentInfo {
   uint32 ByteSize() const;
-  bool ParseFromByteStream(const net::ByteStream& is);
-  bool SerializeToByteStream(net::ByteStream* os) const;
+  bool ParseFromByteStream(const base::ByteStream& is);
+  bool SerializeToByteStream(base::ByteStream* os) const;
 
 #ifdef ZARESD_SERVER_LIB
   bool ParseFromDatabase(const db::QueryAnswer& answ);
@@ -113,13 +114,13 @@ struct UserUnreadMsgCount {
     return sizeof(from_user_id) + sizeof(unread_msg_count);
   }
 
-  bool ParseFromByteStream(const net::ByteStream& is) {
+  bool ParseFromByteStream(const base::ByteStream& is) {
     is >> from_user_id
       >> unread_msg_count;
 
     return !is.Fail();
   }
-  bool SerializeToByteStream(net::ByteStream* os) const {
+  bool SerializeToByteStream(base::ByteStream* os) const {
     (*os) << from_user_id
       << unread_msg_count;
 
@@ -136,8 +137,8 @@ struct UserUnreadMsgCount {
 
 struct ServerMsg {
   uint32 ByteSize() const;
-  bool ParseFromByteStream(const net::ByteStream& is);
-  bool SerializeToByteStream(net::ByteStream* os) const;
+  bool ParseFromByteStream(const base::ByteStream& is);
+  bool SerializeToByteStream(base::ByteStream* os) const;
 
 #ifdef ZARESD_SERVER_LIB
   bool ParseFromDatabase(const db::QueryAnswer& answ) { return true; }
@@ -155,8 +156,8 @@ struct ServerMsg {
 //////////////////////////////////////////////////////////////////////////
 struct GroupInfo {
   uint32 ByteSize() const;
-  bool ParseFromByteStream(const net::ByteStream& is);
-  bool SerializeToByteStream(net::ByteStream* os) const;
+  bool ParseFromByteStream(const base::ByteStream& is);
+  bool SerializeToByteStream(base::ByteStream* os) const;
 
 #ifdef ZARESD_SERVER_LIB
   bool ParseFromDatabase(const db::QueryAnswer& answ);
@@ -176,13 +177,13 @@ struct GroupUnreadMsgCount {
     return sizeof(group_id) + sizeof(unread_msg_count);
   }
 
-  bool ParseFromByteStream(const net::ByteStream& is) {
+  bool ParseFromByteStream(const base::ByteStream& is) {
     is >> group_id
       >> unread_msg_count;
 
     return !is.Fail();
   }
-  bool SerializeToByteStream(net::ByteStream* os) const {
+  bool SerializeToByteStream(base::ByteStream* os) const {
     (*os) << group_id
       << unread_msg_count;
 
@@ -199,8 +200,8 @@ struct GroupUnreadMsgCount {
 
 struct GroupMsg {
   uint32 ByteSize() const;
-  bool ParseFromByteStream(const net::ByteStream& is);
-  bool SerializeToByteStream(net::ByteStream* os) const;
+  bool ParseFromByteStream(const base::ByteStream& is);
+  bool SerializeToByteStream(base::ByteStream* os) const;
 
   uint32 from_user_id;
   uint32 create_time;
@@ -210,8 +211,8 @@ struct GroupMsg {
 //////////////////////////////////////////////////////////////////////////
 struct OfflineFile {
   uint32 ByteSize() const { return sizeof(from_id) + SIZEOF_STRING(task_id) + SIZEOF_STRING(file_name) + sizeof(file_size); }
-  bool ParseFromByteStream(const net::ByteStream& is) { return true; }
-  bool SerializeToByteStream(net::ByteStream* os) const { return true; }
+  bool ParseFromByteStream(const base::ByteStream& is) { return true; }
+  bool SerializeToByteStream(base::ByteStream* os) const { return true; }
 
   uint32	from_id;
   std::string task_id;
@@ -263,8 +264,8 @@ protected:
 
   // inline void set_attach_data_type(BaseAttachData::AttachDataType attach_data_type) { attach_data_type_ = attach_data_type; }
 
-  virtual bool ParseFromByteStream(const net::ByteStream& is);
-  virtual bool SerializeToByteStream(net::ByteStream* os) const;
+  virtual bool ParseFromByteStream(const base::ByteStream& is);
+  virtual bool SerializeToByteStream(base::ByteStream* os) const;
 
   // 每个PDU只使用一种AttachData
   // 对象生成的时候就设定是否要使用attach_data以及使用哪种类型的AttachData

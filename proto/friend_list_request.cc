@@ -7,13 +7,13 @@
 
 #include "proto/friend_list_request.h"
 
-bool FriendListRequest::ParseFromByteStream(const net::ByteStream& is) {
+bool FriendListRequest::ParseFromByteStream(const base::ByteStream& is) {
   is >> user_id_;
 
   return !is.Fail();
 }
 
-bool FriendListRequest::SerializeToByteStream(net::ByteStream* os) const {
+bool FriendListRequest::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << user_id_;
 
   return !os->Fail();

@@ -7,7 +7,7 @@
 
 #include "proto/user_action_log.h"
 
-bool UserActionLog::ParseFromByteStream(const net::ByteStream& is) {
+bool UserActionLog::ParseFromByteStream(const base::ByteStream& is) {
   is >> source_
     >> protocol_;
   is.ReadString(ip_);
@@ -21,7 +21,7 @@ bool UserActionLog::ParseFromByteStream(const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool UserActionLog::SerializeToByteStream(net::ByteStream* os) const {
+bool UserActionLog::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << source_
     << protocol_;
   os->WriteString(ip_);

@@ -13,14 +13,14 @@ uint32 ByteSize(const FriendInfo& friend_info) {
   return sizeof(friend_info.friend_user_id) + sizeof(friend_info.updated);
 }
 
-bool ParseFromByteStream(FriendInfo* friend_info, const net::ByteStream& is) {
+bool ParseFromByteStream(FriendInfo* friend_info, const base::ByteStream& is) {
   is >> friend_info->friend_user_id
     >> friend_info->updated;
 
   return !is.Fail();
 }
 
-bool SerializeToByteStream(const FriendInfo& friend_info, net::ByteStream* os) {
+bool SerializeToByteStream(const FriendInfo& friend_info, base::ByteStream* os) {
   (*os) << friend_info.friend_user_id
     << friend_info.updated;
 
@@ -36,7 +36,7 @@ uint32 FriendListResponse::ByteSize() const {
   return size;
 }
 
-bool FriendListResponse::ParseFromByteStream(const net::ByteStream& is) {
+bool FriendListResponse::ParseFromByteStream(const base::ByteStream& is) {
   is >> from_user_id_;
 
   PARSE_OBJECTPTR_ARRAY_IMPLICIT(FriendInfo, friend_lists_);
@@ -44,7 +44,7 @@ bool FriendListResponse::ParseFromByteStream(const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool FriendListResponse::SerializeToByteStream(net::ByteStream* os) const {
+bool FriendListResponse::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << from_user_id_;
 
   SERIALIZE_OBJECTPTR_ARRAY_IMPLICIT(friend_lists_);

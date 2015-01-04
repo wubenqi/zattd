@@ -7,13 +7,13 @@
 
 #include "proto/stop_receive_packet.h"
 
-bool StopReceivePacket::ParseFromByteStream(const net::ByteStream& is) {
+bool StopReceivePacket::ParseFromByteStream(const base::ByteStream& is) {
   is >> code_;
 
   return !is.Fail();
 }
 
-bool StopReceivePacket::SerializeToByteStream(net::ByteStream* os) const {
+bool StopReceivePacket::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << code_;
 
   return !os->Fail();

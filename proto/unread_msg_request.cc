@@ -7,7 +7,7 @@
 
 #include "proto/unread_msg_request.h"
 
-bool UnreadMsgRequest::ParseFromByteStream(const net::ByteStream& is) {
+bool UnreadMsgRequest::ParseFromByteStream(const base::ByteStream& is) {
   is >> from_user_id_
     >> to_user_id_
     >> client_type_;
@@ -15,7 +15,7 @@ bool UnreadMsgRequest::ParseFromByteStream(const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool UnreadMsgRequest::SerializeToByteStream(net::ByteStream* os) const {
+bool UnreadMsgRequest::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << from_user_id_
     << to_user_id_
     << client_type_;

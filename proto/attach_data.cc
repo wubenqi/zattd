@@ -19,10 +19,10 @@ public:
   virtual uint32 ByteSize() const {
     return 0;
   }
-  virtual bool ParseFromByteStream(const net::ByteStream& is) {
+  virtual bool ParseFromByteStream(const base::ByteStream& is) {
     return true;
   }
-  virtual bool SerializeToByteStream(net::ByteStream* os) const {
+  virtual bool SerializeToByteStream(base::ByteStream* os) const {
     return true;
   }
 };
@@ -45,8 +45,8 @@ public:
     BaseAttachData(kAttachDataTypePDU) {}
 
   virtual uint32 ByteSize() const;
-  virtual bool ParseFromByteStream(const net::ByteStream& is);
-  virtual bool SerializeToByteStream(net::ByteStream* os) const;
+  virtual bool ParseFromByteStream(const base::ByteStream& is);
+  virtual bool SerializeToByteStream(base::ByteStream* os) const;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -91,7 +91,7 @@ uint32 BaseAttachData::ByteSize() const {
   return sizeof(attach_data_len_) + sizeof(type_) + sizeof(handle_) + sizeof(service_type_);
 }
 
-bool BaseAttachData::ParseFromByteStream(const net::ByteStream& is) {
+bool BaseAttachData::ParseFromByteStream(const base::ByteStream& is) {
   is >> attach_data_len_
      >> type_
      >> handle_
@@ -100,7 +100,7 @@ bool BaseAttachData::ParseFromByteStream(const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool BaseAttachData::SerializeToByteStream(net::ByteStream* os) const {
+bool BaseAttachData::SerializeToByteStream(base::ByteStream* os) const {
   //attach_data_len_ = ByteSize()-sizeof(attach_data_len_);
   (*os) << (static_cast<uint32>(ByteSize()-sizeof(attach_data_len_)))
         << type_
@@ -133,7 +133,7 @@ uint32 PduAttachData::ByteSize() const {
   return BaseAttachData::ByteSize() + SIZEOF_STRING(pdu_data_);
 }
 
-bool PduAttachData::ParseFromByteStream(const net::ByteStream& is) {
+bool PduAttachData::ParseFromByteStream(const base::ByteStream& is) {
   bool result = BaseAttachData::ParseFromByteStream(is);
   if (result) {
     result = (0 == is.ReadString(pdu_data_));
@@ -141,7 +141,7 @@ bool PduAttachData::ParseFromByteStream(const net::ByteStream& is) {
   return result;
 }
 
-bool PduAttachData::SerializeToByteStream(net::ByteStream* os) const {
+bool PduAttachData::SerializeToByteStream(base::ByteStream* os) const {
   bool result = BaseAttachData::SerializeToByteStream(os);
   if (result) {
     result = (0 == os->WriteString(pdu_data_));

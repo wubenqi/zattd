@@ -7,7 +7,7 @@
 
 #include "proto/group_create_normal_group_notify.h"
 
-bool GroupCreateNormalGroupNotify::ParseFromByteStream(const net::ByteStream& is) {
+bool GroupCreateNormalGroupNotify::ParseFromByteStream(const base::ByteStream& is) {
   is >> group_id_;
 
   is.ReadString(group_name_);
@@ -18,7 +18,7 @@ bool GroupCreateNormalGroupNotify::ParseFromByteStream(const net::ByteStream& is
   return !is.Fail();
 }
 
-bool GroupCreateNormalGroupNotify::SerializeToByteStream(net::ByteStream* os) const {
+bool GroupCreateNormalGroupNotify::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << group_id_;
 
   os->WriteString(group_name_);

@@ -7,14 +7,14 @@
 
 #include "proto/unread_msg_count_request.h"
 
-bool UnreadMsgCountRequest::ParseFromByteStream(const net::ByteStream& is) {
+bool UnreadMsgCountRequest::ParseFromByteStream(const base::ByteStream& is) {
   is >> user_id_
     >> client_type_;
 
   return !is.Fail();
 }
 
-bool UnreadMsgCountRequest::SerializeToByteStream(net::ByteStream* os) const {
+bool UnreadMsgCountRequest::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << user_id_
     << client_type_;
 

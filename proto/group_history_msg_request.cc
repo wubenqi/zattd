@@ -7,7 +7,7 @@
 
 #include "proto/group_history_msg_request.h"
 
-bool GroupHistoryMsgRequest::ParseFromByteStream(const net::ByteStream& is) {
+bool GroupHistoryMsgRequest::ParseFromByteStream(const base::ByteStream& is) {
   is >> req_user_id_
     >> group_id_
     >> msg_offset_
@@ -16,7 +16,7 @@ bool GroupHistoryMsgRequest::ParseFromByteStream(const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool GroupHistoryMsgRequest::SerializeToByteStream(net::ByteStream* os) const {
+bool GroupHistoryMsgRequest::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << req_user_id_
     << group_id_
     << msg_offset_

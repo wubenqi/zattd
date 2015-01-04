@@ -7,7 +7,7 @@
 
 #include "proto/users_info_request.h"
 
-bool UsersInfoRequest::ParseFromByteStream(const net::ByteStream& is) {
+bool UsersInfoRequest::ParseFromByteStream(const base::ByteStream& is) {
   uint32 user_id_list_size = 0;
 
   is >> from_user_id_;
@@ -17,7 +17,7 @@ bool UsersInfoRequest::ParseFromByteStream(const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool UsersInfoRequest::SerializeToByteStream(net::ByteStream* os) const {
+bool UsersInfoRequest::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << from_user_id_;
 
   SERIALIZE_BASICTYPE_ARRAY_IMPLICIT(user_id_list_);

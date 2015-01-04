@@ -7,13 +7,13 @@
 
 #include "proto/all_user_request.h"
 
-bool AllUserRequest::ParseFromByteStream(const net::ByteStream& is) {
+bool AllUserRequest::ParseFromByteStream(const base::ByteStream& is) {
   is >> req_user_id_;
 
   return !is.Fail();
 }
 
-bool AllUserRequest::SerializeToByteStream(net::ByteStream* os) const {
+bool AllUserRequest::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << req_user_id_;
 
   return !os->Fail();

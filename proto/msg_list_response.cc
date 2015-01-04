@@ -19,7 +19,7 @@ uint32 ByteSize(const ServerMsg& server_msg) {
     SIZEOF_STRING(server_msg.msg_data);
 }
 
-bool ParseFromByteStream(ServerMsg* server_msg, const net::ByteStream& is) {
+bool ParseFromByteStream(ServerMsg* server_msg, const base::ByteStream& is) {
   is >> server_msg->from_user_id;
   is.ReadString(server_msg->from_name);
   is.ReadString(server_msg->from_nick_name);
@@ -31,7 +31,7 @@ bool ParseFromByteStream(ServerMsg* server_msg, const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool SerializeToByteStream(const ServerMsg& server_msg, net::ByteStream* os) {
+bool SerializeToByteStream(const ServerMsg& server_msg, base::ByteStream* os) {
   (*os) << server_msg.from_user_id;
   os->WriteString(server_msg.from_name);
   os->WriteString(server_msg.from_nick_name);
@@ -53,7 +53,7 @@ uint32 MsgListResponse::ByteSize() const {
 }
 
 
-bool MsgListResponse::ParseFromByteStream(const net::ByteStream& is) {
+bool MsgListResponse::ParseFromByteStream(const base::ByteStream& is) {
   is >> request_cmd_id_
     >> from_user_id_
     >> to_user_id_;
@@ -63,7 +63,7 @@ bool MsgListResponse::ParseFromByteStream(const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool MsgListResponse::SerializeToByteStream(net::ByteStream* os) const {
+bool MsgListResponse::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << request_cmd_id_
     << from_user_id_
     << to_user_id_;

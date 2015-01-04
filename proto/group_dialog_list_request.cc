@@ -7,13 +7,13 @@
 
 #include "proto/group_dialog_list_request.h"
 
-bool GroupDialogListRequest::ParseFromByteStream(const net::ByteStream& is) {
+bool GroupDialogListRequest::ParseFromByteStream(const base::ByteStream& is) {
   is >> user_id_;
 
   return !is.Fail();
 }
 
-bool GroupDialogListRequest::SerializeToByteStream(net::ByteStream* os) const {
+bool GroupDialogListRequest::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << user_id_;
 
   return !os->Fail();

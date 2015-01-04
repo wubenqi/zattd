@@ -13,14 +13,14 @@ uint32 ByteSize(const UserUnreadMsgCount& user_unread_msg_count) {
   return sizeof(user_unread_msg_count.from_user_id) + sizeof(user_unread_msg_count.unread_msg_count);
 }
 
-bool ParseFromByteStream(UserUnreadMsgCount* user_unread_msg_count, const net::ByteStream& is) {
+bool ParseFromByteStream(UserUnreadMsgCount* user_unread_msg_count, const base::ByteStream& is) {
   is >> user_unread_msg_count->from_user_id
     >> user_unread_msg_count->unread_msg_count;
 
   return !is.Fail();
 }
 
-bool SerializeToByteStream(const UserUnreadMsgCount& user_unread_msg_count, net::ByteStream* os) {
+bool SerializeToByteStream(const UserUnreadMsgCount& user_unread_msg_count, base::ByteStream* os) {
   (*os) << user_unread_msg_count.from_user_id
     << user_unread_msg_count.unread_msg_count;
 
@@ -36,7 +36,7 @@ uint32 UnreadMsgCountResponse::ByteSize() const {
   return size;
 }
 
-bool UnreadMsgCountResponse::ParseFromByteStream(const net::ByteStream& is) {
+bool UnreadMsgCountResponse::ParseFromByteStream(const base::ByteStream& is) {
   is >> to_user_id_;
 
   PARSE_OBJECTPTR_ARRAY_IMPLICIT(UserUnreadMsgCount, user_unread_list_);
@@ -44,7 +44,7 @@ bool UnreadMsgCountResponse::ParseFromByteStream(const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool UnreadMsgCountResponse::SerializeToByteStream(net::ByteStream* os) const {
+bool UnreadMsgCountResponse::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << to_user_id_;
 
   SERIALIZE_OBJECTPTR_ARRAY_IMPLICIT(user_unread_list_);

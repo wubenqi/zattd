@@ -7,7 +7,7 @@
 
 #include "proto/history_msg_request.h"
 
-bool HistoryMsgRequest::ParseFromByteStream(const net::ByteStream& is) {
+bool HistoryMsgRequest::ParseFromByteStream(const base::ByteStream& is) {
   is >> from_user_id_
     >> to_user_id_
     >> msg_offset_
@@ -16,7 +16,7 @@ bool HistoryMsgRequest::ParseFromByteStream(const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool HistoryMsgRequest::SerializeToByteStream(net::ByteStream* os) const {
+bool HistoryMsgRequest::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << from_user_id_
     << to_user_id_
     << msg_offset_

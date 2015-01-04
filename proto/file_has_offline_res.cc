@@ -16,7 +16,7 @@ uint32 ByteSize(const OfflineFile& offline_file) {
     sizeof(offline_file.file_size);
 }
 
-bool ParseFromByteStream(OfflineFile* offline_file, const net::ByteStream& is) {
+bool ParseFromByteStream(OfflineFile* offline_file, const base::ByteStream& is) {
   is >> offline_file->from_id;
   is.ReadString(offline_file->task_id);
   is.ReadString(offline_file->file_name);
@@ -25,7 +25,7 @@ bool ParseFromByteStream(OfflineFile* offline_file, const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool SerializeToByteStream(const OfflineFile& offline_file, net::ByteStream* os) {
+bool SerializeToByteStream(const OfflineFile& offline_file, base::ByteStream* os) {
   (*os) << offline_file.from_id;
   os->WriteString(offline_file.task_id);
   os->WriteString(offline_file.file_name);
@@ -44,7 +44,7 @@ uint32 FileHasOfflineRes::ByteSize() const {
 }
 
 
-bool FileHasOfflineRes::ParseFromByteStream(const net::ByteStream& is) {
+bool FileHasOfflineRes::ParseFromByteStream(const base::ByteStream& is) {
   is >> req_user_id_;
 
   PARSE_OBJECTPTR_ARRAY_IMPLICIT(OfflineFile, file_list_);
@@ -52,7 +52,7 @@ bool FileHasOfflineRes::ParseFromByteStream(const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool FileHasOfflineRes::SerializeToByteStream(net::ByteStream* os) const {
+bool FileHasOfflineRes::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << req_user_id_;
 
   SERIALIZE_OBJECTPTR_ARRAY_IMPLICIT(file_list_);

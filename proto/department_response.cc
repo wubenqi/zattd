@@ -18,7 +18,7 @@ uint32 ByteSize(const DepartmentInfo& department_info) {
     sizeof(department_info.status);
 }
 
-bool ParseFromByteStream(DepartmentInfo* department_info, const net::ByteStream& is) {
+bool ParseFromByteStream(DepartmentInfo* department_info, const base::ByteStream& is) {
   is >> department_info->depart_id;
   is.ReadString(department_info->title);
   is.ReadString(department_info->description);
@@ -29,7 +29,7 @@ bool ParseFromByteStream(DepartmentInfo* department_info, const net::ByteStream&
   return !is.Fail();
 }
 
-bool SerializeToByteStream(const DepartmentInfo& department_info, net::ByteStream* os) {
+bool SerializeToByteStream(const DepartmentInfo& department_info, base::ByteStream* os) {
   (*os) << department_info.depart_id;
   os->WriteString(department_info.title);
   os->WriteString(department_info.description);
@@ -49,7 +49,7 @@ uint32 DepartmentResponse::ByteSize() const {
   return size;
 }
 
-bool DepartmentResponse::ParseFromByteStream(const net::ByteStream& is) {
+bool DepartmentResponse::ParseFromByteStream(const base::ByteStream& is) {
   is >> req_user_id_;
 
   PARSE_OBJECTPTR_ARRAY_IMPLICIT(DepartmentInfo, depart_list_);
@@ -57,7 +57,7 @@ bool DepartmentResponse::ParseFromByteStream(const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool DepartmentResponse::SerializeToByteStream(net::ByteStream* os) const {
+bool DepartmentResponse::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << req_user_id_;
 
   SERIALIZE_OBJECTPTR_ARRAY_IMPLICIT(depart_list_);

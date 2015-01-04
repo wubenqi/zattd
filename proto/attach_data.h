@@ -9,8 +9,7 @@
 #define PROTO_ATACH_DATA_H_
 
 #include "base/basictypes.h"
-
-#include "net/base/byte_stream.h"
+#include "base2/byte_stream.h"
 // #include "message_pdu/message_pdu.h"
 
 enum {
@@ -61,8 +60,8 @@ public:
   virtual void SetPduData(const std::string& val) { pdu_data_ = val; }
 
   virtual uint32 ByteSize() const;
-  virtual bool ParseFromByteStream(const net::ByteStream& is);
-  virtual bool SerializeToByteStream(net::ByteStream* os) const;
+  virtual bool ParseFromByteStream(const base::ByteStream& is);
+  virtual bool SerializeToByteStream(base::ByteStream* os) const;
 
 protected:
   explicit BaseAttachData(AttachDataType attach_data_type) :

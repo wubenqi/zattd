@@ -7,7 +7,7 @@
 
 #include "proto/group_msg_read_ack.h"
 
-bool GroupMsgReadAck::ParseFromByteStream(const net::ByteStream& is) {
+bool GroupMsgReadAck::ParseFromByteStream(const base::ByteStream& is) {
   is >> req_user_id_
     >> group_id_
     >> client_type_;
@@ -15,7 +15,7 @@ bool GroupMsgReadAck::ParseFromByteStream(const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool GroupMsgReadAck::SerializeToByteStream(net::ByteStream* os) const {
+bool GroupMsgReadAck::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << req_user_id_
     << group_id_
     << client_type_;

@@ -29,7 +29,7 @@ uint32 UserInfo::ByteSize() const {
     SIZEOF_STRING(email);
 }
 
-bool UserInfo::ParseFromByteStream(const net::ByteStream& is) {
+bool UserInfo::ParseFromByteStream(const base::ByteStream& is) {
   is >> user_id;
   is.ReadString(nick_name);
   is.ReadString(avatar_url);
@@ -45,7 +45,7 @@ bool UserInfo::ParseFromByteStream(const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool UserInfo::SerializeToByteStream(net::ByteStream* os) const {
+bool UserInfo::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << user_id;
   os->WriteString(nick_name);
   os->WriteString(avatar_url);
@@ -126,7 +126,7 @@ uint32 DepartmentInfo::ByteSize() const {
   return sizeof(depart_id) + SIZEOF_STRING(title) + SIZEOF_STRING(description) + sizeof(parent_depart_id) + sizeof(leader) + sizeof(status);
 }
 
-bool DepartmentInfo::ParseFromByteStream(const net::ByteStream& is) {
+bool DepartmentInfo::ParseFromByteStream(const base::ByteStream& is) {
   is >> depart_id;
   is.ReadString(title);
   is.ReadString(description);
@@ -137,7 +137,7 @@ bool DepartmentInfo::ParseFromByteStream(const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool DepartmentInfo::SerializeToByteStream(net::ByteStream* os) const {
+bool DepartmentInfo::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << depart_id;
   os->WriteString(title);
   os->WriteString(description);
@@ -186,7 +186,7 @@ uint32 ServerMsg::ByteSize() const {
     SIZEOF_STRING(msg_data);
 }
 
-bool ServerMsg::ParseFromByteStream(const net::ByteStream& is) {
+bool ServerMsg::ParseFromByteStream(const base::ByteStream& is) {
   is >> from_user_id;
   is.ReadString(from_name);
   is.ReadString(from_nick_name);
@@ -198,7 +198,7 @@ bool ServerMsg::ParseFromByteStream(const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool ServerMsg::SerializeToByteStream(net::ByteStream* os) const {
+bool ServerMsg::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << from_user_id;
   os->WriteString(from_name);
   os->WriteString(from_nick_name);
@@ -221,7 +221,7 @@ uint32 GroupInfo::ByteSize() const {
     CalculateContainerByteSize(group_memeber_list);
 }
 
-bool GroupInfo::ParseFromByteStream(const net::ByteStream& is) {
+bool GroupInfo::ParseFromByteStream(const base::ByteStream& is) {
   is >> group_id;
   is.ReadString(group_name);
   is.ReadString(group_avatar);
@@ -239,7 +239,7 @@ bool GroupInfo::ParseFromByteStream(const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool GroupInfo::SerializeToByteStream(net::ByteStream* os) const {
+bool GroupInfo::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << group_id;
   os->WriteString(group_name);
   os->WriteString(group_avatar);
@@ -285,7 +285,7 @@ uint32 OfflineFile::ByteSize() const {
   return sizeof(from_id) + SIZEOF_STRING(task_id) + SIZEOF_STRING(file_name) + sizeof(file_size);
 }
 
-bool OfflineFile::ParseFromByteStream(const net::ByteStream& is) {
+bool OfflineFile::ParseFromByteStream(const base::ByteStream& is) {
   is >> from_id;
   is.ReadString(task_id);
   is.ReadString(file_name);
@@ -293,7 +293,7 @@ bool OfflineFile::ParseFromByteStream(const net::ByteStream& is) {
 
   return !is.Fail();
 }
-bool OfflineFile::SerializeToByteStream(net::ByteStream* os) const {
+bool OfflineFile::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << from_id;
   os->WriteString(task_id);
   os->WriteString(file_name);
@@ -305,7 +305,7 @@ bool OfflineFile::SerializeToByteStream(net::ByteStream* os) const {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseTeamTalkPDU::ParseFromArray(const void* data, uint32 data_len) {
-  net::ByteStream is(data, data_len);
+  base::ByteStream is(data, data_len);
   bool result = ParseFromByteStream(is);
   if (result && HasAttachData()) {
     is.ReadString(attach_data_);
@@ -316,7 +316,7 @@ bool BaseTeamTalkPDU::ParseFromArray(const void* data, uint32 data_len) {
 }
 
 bool BaseTeamTalkPDU::SerializeToArray(void* data, uint32 data_len) const {
-  net::ByteStream os(data, data_len);
+  base::ByteStream os(data, data_len);
   bool result = SerializeToByteStream(&os);
   if (result && HasAttachData()) {
     os.WriteString(attach_data_);
@@ -338,11 +338,11 @@ bool BaseTeamTalkPDU::SerializeToArray(void* data, uint32 data_len) const {
 //  return attach_data_;
 //}
 
-bool BaseTeamTalkPDU::ParseFromByteStream(const net::ByteStream& is) {
+bool BaseTeamTalkPDU::ParseFromByteStream(const base::ByteStream& is) {
   return true;
 }
 
-bool BaseTeamTalkPDU::SerializeToByteStream(net::ByteStream* os) const {
+bool BaseTeamTalkPDU::SerializeToByteStream(base::ByteStream* os) const {
   return true;
 }
 

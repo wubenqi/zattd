@@ -26,7 +26,7 @@ uint32 ByteSize(const UserInfo& user_info) {
     SIZEOF_STRING(user_info.email);
 }
 
-bool ParseFromByteStream(UserInfo* user_info, const net::ByteStream& is) {
+bool ParseFromByteStream(UserInfo* user_info, const base::ByteStream& is) {
   is >> user_info->user_id;
   // is.ReadString(user_info->name);
   is.ReadString(user_info->nick_name);
@@ -43,7 +43,7 @@ bool ParseFromByteStream(UserInfo* user_info, const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool SerializeToByteStream(const UserInfo& user_info, net::ByteStream* os) {
+bool SerializeToByteStream(const UserInfo& user_info, base::ByteStream* os) {
   (*os) << user_info.user_id;
   // os->WriteString(user_info.name);
   os->WriteString(user_info.nick_name);
@@ -69,7 +69,7 @@ uint32 ValidateResponse::ByteSize() const {
   return size;
 }
 
-bool ValidateResponse::ParseFromByteStream(const net::ByteStream& is) {
+bool ValidateResponse::ParseFromByteStream(const base::ByteStream& is) {
   is.ReadString(user_name_);
   is >> result_;
   if (result_) {
@@ -79,7 +79,7 @@ bool ValidateResponse::ParseFromByteStream(const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool ValidateResponse::SerializeToByteStream(net::ByteStream* os) const {
+bool ValidateResponse::SerializeToByteStream(base::ByteStream* os) const {
   os->WriteString(user_name_);
   (*os) << result_;
   if (result_==0) {

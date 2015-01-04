@@ -7,7 +7,7 @@
 
 #include "proto/msg_data.h"
 
-bool MsgData::ParseFromByteStream(const net::ByteStream& is) {
+bool MsgData::ParseFromByteStream(const base::ByteStream& is) {
   is >> request_id_
     >> from_user_id_
     >> to_user_id_
@@ -18,7 +18,7 @@ bool MsgData::ParseFromByteStream(const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool MsgData::SerializeToByteStream(net::ByteStream* os) const {
+bool MsgData::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << request_id_
     << from_user_id_
     << to_user_id_

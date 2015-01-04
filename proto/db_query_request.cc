@@ -7,7 +7,7 @@
 
 #include "proto/db_query_request.h"
 
-bool DBQueryRequest::ParseFromByteStream(const net::ByteStream& is) {
+bool DBQueryRequest::ParseFromByteStream(const base::ByteStream& is) {
   is >> seq_no_
     >> user_id_;
   is.ReadString(query_data_);
@@ -15,7 +15,7 @@ bool DBQueryRequest::ParseFromByteStream(const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool DBQueryRequest::SerializeToByteStream(net::ByteStream* os) const {
+bool DBQueryRequest::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << seq_no_
     << user_id_;
   os->WriteString(query_data_);

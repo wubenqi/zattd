@@ -7,13 +7,13 @@
 
 #include "proto/file_has_offline_req.h"
 
-bool FileHasOfflineReq::ParseFromByteStream(const net::ByteStream& is) {
+bool FileHasOfflineReq::ParseFromByteStream(const base::ByteStream& is) {
   is >> user_id_;
 
   return !is.Fail();
 }
 
-bool FileHasOfflineReq::SerializeToByteStream(net::ByteStream* os) const {
+bool FileHasOfflineReq::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << user_id_;
 
   return !os->Fail();

@@ -7,14 +7,14 @@
 
 #include "proto/validate_request.h"
 
-bool ValidateRequest::ParseFromByteStream(const net::ByteStream& is) {
+bool ValidateRequest::ParseFromByteStream(const base::ByteStream& is) {
   is.ReadString(user_name_);
   is.ReadString(password_);
 
   return !is.Fail();
 }
 
-bool ValidateRequest::SerializeToByteStream(net::ByteStream* os) const {
+bool ValidateRequest::SerializeToByteStream(base::ByteStream* os) const {
   os->WriteString(user_name_);
   os->WriteString(password_);
 

@@ -7,7 +7,7 @@
 
 #include "proto/group_unread_msg_request.h"
 
-bool GroupUnreadMsgRequest::ParseFromByteStream(const net::ByteStream& is) {
+bool GroupUnreadMsgRequest::ParseFromByteStream(const base::ByteStream& is) {
   is >> req_user_id_
     >> group_id_
     >> client_type_;
@@ -15,7 +15,7 @@ bool GroupUnreadMsgRequest::ParseFromByteStream(const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool GroupUnreadMsgRequest::SerializeToByteStream(net::ByteStream* os) const {
+bool GroupUnreadMsgRequest::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << req_user_id_
     << group_id_
     << client_type_;

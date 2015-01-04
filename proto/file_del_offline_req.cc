@@ -7,7 +7,7 @@
 
 #include "proto/file_del_offline_req.h"
 
-bool FileDelOfflineReq::ParseFromByteStream(const net::ByteStream& is) {
+bool FileDelOfflineReq::ParseFromByteStream(const base::ByteStream& is) {
   is >> req_user_id_
     >> from_id_
     >> to_id_;
@@ -17,7 +17,7 @@ bool FileDelOfflineReq::ParseFromByteStream(const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool FileDelOfflineReq::SerializeToByteStream(net::ByteStream* os) const {
+bool FileDelOfflineReq::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << req_user_id_
     << from_id_
     << to_id_;

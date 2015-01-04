@@ -7,7 +7,7 @@
 
 #include "proto/group_create_tmp_group_request.h"
 
-bool GroupCreateTmpGroupRequest::ParseFromByteStream(const net::ByteStream& is) {
+bool GroupCreateTmpGroupRequest::ParseFromByteStream(const base::ByteStream& is) {
   is >> req_user_id_;
 
   is.ReadString(group_name_);
@@ -18,7 +18,7 @@ bool GroupCreateTmpGroupRequest::ParseFromByteStream(const net::ByteStream& is) 
   return !is.Fail();
 }
 
-bool GroupCreateTmpGroupRequest::SerializeToByteStream(net::ByteStream* os) const {
+bool GroupCreateTmpGroupRequest::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << req_user_id_;
 
   os->WriteString(group_name_);

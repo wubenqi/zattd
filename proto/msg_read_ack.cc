@@ -7,7 +7,7 @@
 
 #include "proto/msg_read_ack.h"
 
-bool MsgReadAck::ParseFromByteStream(const net::ByteStream& is) {
+bool MsgReadAck::ParseFromByteStream(const base::ByteStream& is) {
   is >> request_id_
     >> from_user_id_
     >> to_user_id_
@@ -16,7 +16,7 @@ bool MsgReadAck::ParseFromByteStream(const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool MsgReadAck::SerializeToByteStream(net::ByteStream* os) const {
+bool MsgReadAck::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << request_id_
     << from_user_id_
     << to_user_id_

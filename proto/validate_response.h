@@ -30,8 +30,8 @@ public:
   virtual uint32 ByteSize() const;
 
 protected:
-  virtual bool ParseFromByteStream(const net::ByteStream& is);
-  virtual bool SerializeToByteStream(net::ByteStream* os) const;
+  virtual bool ParseFromByteStream(const base::ByteStream& is);
+  virtual bool SerializeToByteStream(base::ByteStream* os) const;
 
   std::string user_name_;
   uint32	result_;	    // 0 -- success, non-0 -- fail reason

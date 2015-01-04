@@ -7,7 +7,7 @@
 
 #include "proto/db_write_response.h"
 
-bool DBWriteResponse::ParseFromByteStream(const net::ByteStream& is) {
+bool DBWriteResponse::ParseFromByteStream(const base::ByteStream& is) {
   is >> request_id_
     >> result_
     >> request_pdu_type_
@@ -17,7 +17,7 @@ bool DBWriteResponse::ParseFromByteStream(const net::ByteStream& is) {
   return !is.Fail();
 }
 
-bool DBWriteResponse::SerializeToByteStream(net::ByteStream* os) const {
+bool DBWriteResponse::SerializeToByteStream(base::ByteStream* os) const {
   (*os) << request_id_
     << result_
     << request_pdu_type_
