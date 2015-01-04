@@ -48,3 +48,6 @@ zattd.suo
 bin/debug/zaresd.pdb
 bin/debug/zaresd.ilk
 bin/debug/zaresd.exe
+bin/debug/zaresd_test.exe
+bin/debug/zaresd_test.ilk
+bin/debug/zaresd_test.pdb
