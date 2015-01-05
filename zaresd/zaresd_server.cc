@@ -27,7 +27,7 @@
 
 ZAresdServer::ZAresdServer() 
   : BaseDaemon() {
-  message_loop_ = new base::MessageLoop(make_scoped_ptr(new base::MessagePumpLibevent2()));
+  message_loop_ = new base::MessageLoop(scoped_ptr<base::MessagePump>(new base::MessagePumpLibevent2()));
 }
 
 ZAresdServer::~ZAresdServer() {

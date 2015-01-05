@@ -19,10 +19,8 @@ LINK_DIRECTORIES(${TF_CURRENT_BINARY_PATH_LIB})
 LINK_DIRECTORIES(/usr/lib64/mysql)
 
 SET (SERVER_LIST 
-		./client_comm_handler.cc
-		./client_comm_handler.h
-		./client_comm_manager.cc
-		./client_comm_manager.h
+		./zares_comm_manager.cc
+		./zares_comm_manager.h
 		./config_info.cc
 		./config_info.h
 		./const_zaresd_defines.h
@@ -119,5 +117,5 @@ ADD_EXECUTABLE(zaresd ${SERVER_LIST}
 )
 
 ##update_end
-TARGET_LINK_LIBRARIES(zaresd proto net db3 message_pdu base2 base dynamic_annotations libevent mysqlclient pthread rt)
+TARGET_LINK_LIBRARIES(zaresd proto net db3 message_pdu base2 base libevent mysqlclient pthread rt)
 
